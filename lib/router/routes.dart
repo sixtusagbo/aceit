@@ -1,9 +1,4 @@
-import 'package:aceit/screens/forgot_password_page.dart';
-import 'package:aceit/screens/home_page.dart';
-import 'package:aceit/screens/login_page.dart';
-import 'package:aceit/screens/profile_page.dart';
-import 'package:aceit/screens/splash_page.dart';
-import 'package:go_router/go_router.dart';
+part of 'router.dart';
 
 final appRoutes = [
   GoRoute(
