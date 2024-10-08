@@ -1,8 +1,8 @@
 import 'package:aceit/screens/forgot_password_page.dart';
 import 'package:aceit/screens/home_page.dart';
 import 'package:aceit/screens/login_page.dart';
+import 'package:aceit/screens/profile_page.dart';
 import 'package:aceit/screens/splash_page.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:go_router/go_router.dart';
 
 final appRoutes = [
@@ -38,16 +38,10 @@ final appRoutes = [
     ],
   ),
   GoRoute(
-    path: 'profile',
+    path: ProfilePage.routeLocation,
+    name: ProfilePage.routeName,
     builder: (context, state) {
-      return ProfileScreen(
-        providers: const [],
-        actions: [
-          SignedOutAction((context) {
-            context.pushReplacement('/');
-          }),
-        ],
-      );
+      return const ProfilePage();
     },
   ),
 ];
