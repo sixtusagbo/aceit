@@ -1,5 +1,7 @@
 import 'package:aceit/screens/profile_page.dart';
 import 'package:aceit/state/auth.dart';
+import 'package:aceit/utils/extensions.dart';
+import 'package:aceit/widgets/course_progress_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +24,10 @@ class HomePage extends ConsumerWidget {
           children: [
             GestureDetector(
               onTap: () => context.push(ProfilePage.routeLocation),
-              child: const CircleAvatar(child: Icon(Icons.person)),
+              child: const CircleAvatar(
+                backgroundColor: Colors.black,
+                child: Icon(Icons.person),
+              ),
             ),
             12.horizontalSpace,
             SizedBox(
@@ -46,19 +51,77 @@ class HomePage extends ConsumerWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 23.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "Quick Access",
+              style: context.textTheme.titleMedium?.copyWith(
+                fontSize: 22.sp,
+                fontWeight: FontWeight.w700,
+              ),
             ),
+            16.verticalSpace,
 
             /// Cards for quick access
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final _ in [1, 2, 3])
+                    Container(
+                      width: 132.w,
+                      height: 101.h,
+                      decoration: ShapeDecoration(
+                        color: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.r)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Lorem Ipsum',
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          // style: context.textTheme,
+                        ),
+                      ),
+                    ),
+                ].separatedBy(10.horizontalSpace),
+              ),
+            ),
+            20.verticalSpace,
 
-            /// Current progress with previous courses on Practice
+            Text(
+              "Continue with previous courses",
+              style: context.textTheme.titleMedium?.copyWith(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            16.verticalSpace,
 
-            /// Recent courses
+            /// Continue with previous courses
+            Container(
+              width: double.infinity,
+              decoration: ShapeDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.r),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const CourseProgressWidget(),
+                  const CourseProgressWidget(),
+                  const CourseProgressWidget(),
+                ].separatedBy(const Divider()),
+              ),
+            ),
+            16.verticalSpace,
           ],
         ),
       ),
