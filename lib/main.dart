@@ -1,3 +1,4 @@
+import 'package:aceit/utils/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,16 +37,17 @@ class AceitApp extends ConsumerWidget {
             routerDelegate: router.routerDelegate,
             routeInformationProvider: router.routeInformationProvider,
             title: 'Ace iT',
-            theme: ThemeData(
+            theme: ThemeData.light().copyWith(
               buttonTheme: Theme.of(context).buttonTheme.copyWith(
-                    highlightColor: Colors.deepPurple,
+                    highlightColor: kPrimaryColor,
                   ),
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              colorScheme: ColorScheme.fromSwatch(primarySwatch: customBlue),
               textTheme: GoogleFonts.interTextTheme(
                 Theme.of(context).textTheme,
               ),
               visualDensity: VisualDensity.adaptivePlatformDensity,
-              useMaterial3: true,
+              scaffoldBackgroundColor: Colors.white,
+              primaryColor: kPrimaryColor,
             ),
             debugShowCheckedModeBanner: false,
           );
