@@ -1,6 +1,6 @@
-import 'package:aceit/screens/home_page.dart';
-import 'package:aceit/screens/quizzes_page.dart';
-import 'package:aceit/screens/settings_page.dart';
+import 'package:aceit/pages/home_page.dart';
+import 'package:aceit/pages/quizzes_page.dart';
+import 'package:aceit/pages/settings_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

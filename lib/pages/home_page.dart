@@ -1,4 +1,4 @@
-import 'package:aceit/screens/profile_page.dart';
+import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
