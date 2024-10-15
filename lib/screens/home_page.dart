@@ -2,14 +2,12 @@ import 'package:aceit/screens/profile_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class HomePage extends HookConsumerWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
   static String get routeName => 'home';
   static String get routeLocation => '/';
@@ -19,7 +17,6 @@ class HomePage extends HookConsumerWidget {
     final name = ref.watch(authProvider.select(
       (value) => value.valueOrNull?.displayName,
     ));
-    final page = useState(0);
 
     return Scaffold(
       appBar: AppBar(
@@ -127,17 +124,6 @@ class HomePage extends HookConsumerWidget {
             16.verticalSpace,
           ],
         ),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        items: const <Widget>[
-          Icon(Icons.home, size: 30),
-          Icon(Icons.quiz, size: 30),
-          Icon(Icons.settings, size: 30),
-        ],
-        onTap: (index) {
-          page.value = index;
-        },
       ),
     );
   }
