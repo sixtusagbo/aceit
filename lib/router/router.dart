@@ -14,13 +14,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'routes.dart';
 
-final _key = GlobalKey<NavigatorState>();
-
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    navigatorKey: _key,
+    navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     initialLocation: SplashPage.routeLocation,
     routes: appRoutes,
