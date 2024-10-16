@@ -83,11 +83,11 @@ class QuizPage extends HookWidget {
       isQuizFinished.value = true;
       score.value = selectedAnswers.value.asMap().entries.where((entry) {
         final question = questions[entry.key];
-        final answerIndex = (question['options'] as List)
-            .indexOf((question['options'] as List)[question['answer'] as int]);
-        final selectedOptionIndex = shuffledOptions[entry.key]
-            .indexOf((question['options'] as List)[entry.value]);
-        return answerIndex == selectedOptionIndex;
+        final correctAnswer = question['answer'] as int;
+        final selectedOptionIndex = entry.value;
+        final selectedOption = shuffledOptions[entry.key][selectedOptionIndex];
+        final correctOption = (question['options'] as List)[correctAnswer];
+        return selectedOption == correctOption;
       }).length;
 
       showDialog(
