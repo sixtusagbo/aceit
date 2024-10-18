@@ -61,7 +61,7 @@ class _QuizContent extends HookConsumerWidget {
     final secondsElapsed = useState(0);
     final isQuizFinished = useState(false);
     final selectedAnswers = useState(List<int?>.filled(questions.length, null));
-
+    final canPop = useState(false);
     final courseDetailsAsync = ref.watch(courseDetailsByQuizIdProvider(quizId));
     final userId = ref.watch(userIdProvider);
     final quizResultAsync = ref.watch(quizResultProvider(quizId));
@@ -176,8 +176,11 @@ class _QuizContent extends HookConsumerWidget {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('OK', style: TextStyle(fontSize: 14.sp)),
+                onPressed: () {
+                  context.pop(); // Close dialog
+                  canPop.value = true;
+                },
+                child: Text('Okay', style: TextStyle(fontSize: 14.sp)),
               ),
             ],
           ),
@@ -186,11 +189,11 @@ class _QuizContent extends HookConsumerWidget {
     }
 
     return PopScope(
-      canPop: false,
+      canPop: canPop.value,
       onPopInvokedWithResult: (didPop, _) async {
-        bool? canPop = false;
+        bool? canPopPage = false;
         if (!isQuizFinished.value) {
-          canPop = await showDialog<bool>(
+          canPopPage = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Leave quiz?'),
@@ -211,10 +214,15 @@ class _QuizContent extends HookConsumerWidget {
               ],
             ),
           );
+        } else {
+          canPopPage = true;
         }
-        if (canPop == true) {
+
+        if (canPopPage == true) {
+          canPop.value = true;
           if (context.mounted) Navigator.pop(context);
         } else {
+          canPop.value = false;
           return;
         }
       },
