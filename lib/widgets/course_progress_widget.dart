@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CourseProgressWidget extends StatelessWidget {
   const CourseProgressWidget({
@@ -13,6 +14,7 @@ class CourseProgressWidget extends StatelessWidget {
     required this.progress,
     required this.quizId,
     required this.resultId,
+    this.isDummy = false,
   });
 
   final String courseCode;
@@ -20,47 +22,47 @@ class CourseProgressWidget extends StatelessWidget {
   final double progress;
   final String quizId;
   final String resultId;
+  final bool isDummy;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Ink(
-        decoration: ShapeDecoration(
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(17.r),
-          ),
+    return Container(
+      decoration: ShapeDecoration(
+        color: Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(17.r),
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    courseCode,
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 20.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  courseCode,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
                   ),
-                  Text(
-                    courseTitle,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  courseTitle,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
                   ),
-                  8.verticalSpace,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                8.verticalSpace,
 
-                  /// Progress bar
-                  LinearPercentIndicator(
+                /// Progress bar
+                Skeleton.leaf(
+                  child: LinearPercentIndicator(
                     width: MediaQuery.sizeOf(context).width * 0.5,
                     animation: true,
                     lineHeight: 8.h,
@@ -71,26 +73,28 @@ class CourseProgressWidget extends StatelessWidget {
                     progressColor: Colors.greenAccent,
                     trailing: Text('${(progress * 100).toInt()}%'),
                     padding: EdgeInsets.only(right: 10.w),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
+            ),
 
-              /// Circle arrow right icon
-              IconButton(
-                onPressed: () => context.push(
-                    '${QuizzesPage.routeLocation}/$quizId?result=$resultId'),
-                icon: const Icon(
-                  Icons.arrow_forward_ios,
-                ),
-                color: Theme.of(context).primaryColor,
-                style: IconButton.styleFrom(
-                  shape: const CircleBorder(),
-                  backgroundColor: const Color(0xFFCFB9F4),
-                  fixedSize: Size.fromHeight(29.h),
-                ),
-              )
-            ],
-          ),
+            /// Circle arrow right icon
+            IconButton(
+              onPressed: isDummy
+                  ? null
+                  : () => context.push(
+                      '${QuizzesPage.routeLocation}/$quizId?result=$resultId'),
+              icon: const Icon(
+                Icons.arrow_forward_ios,
+              ),
+              color: Theme.of(context).primaryColor,
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: const Color(0xFFCFB9F4),
+                fixedSize: Size.fromHeight(29.h),
+              ),
+            )
+          ],
         ),
       ),
     );

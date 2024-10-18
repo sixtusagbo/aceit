@@ -2,13 +2,13 @@ import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/state/quiz_results.dart';
 import 'package:aceit/utils/constants.dart';
-import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/auto_scrolling_carousel.dart';
-import 'package:aceit/widgets/course_progress_widget.dart';
+import 'package:aceit/widgets/continue_progress_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends ConsumerWidget {
@@ -84,43 +84,12 @@ class HomePage extends ConsumerWidget {
             /// Continue in-progress quiz
             inProgressQuizzes.when(
               data: (results) => results.isEmpty
-                  ? const Text('No in-progress quizzes')
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Pick up where you left off",
-                          style: context.textTheme.titleMedium?.copyWith(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        16.verticalSpace,
-                        Container(
-                          width: double.infinity,
-                          decoration: ShapeDecoration(
-                            color: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.r),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              for (final result in results)
-                                CourseProgressWidget(
-                                  courseCode: result.course!.code,
-                                  courseTitle: result.course!.title,
-                                  progress: result.progress,
-                                  quizId: result.quizId,
-                                  resultId: result.id,
-                                )
-                            ].separatedBy(const Divider()),
-                          ),
-                        ),
-                      ],
-                    ),
+                  ? const Text('No quizzes in progress')
+                  : ContinueProgressWidget(results: results),
               error: (err, _) => Text('Error: $err'),
-              loading: CircularProgressIndicator.new,
+              loading: () => Skeletonizer(
+                child: ContinueProgressWidget(results: kDummyQuizResults),
+              ),
             ),
             16.verticalSpace,
           ],

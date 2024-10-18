@@ -1,3 +1,5 @@
+import 'package:aceit/models/course.dart';
+import 'package:aceit/models/quiz_result.dart';
 import 'package:flutter/material.dart';
 
 const kPrimaryColor = Color(0xFF458EFF);
@@ -23,4 +25,27 @@ const kBannerImages = [
   'assets/images/progress-reports.webp',
   'assets/images/question-bank.webp',
   'assets/images/result-analysis.webp',
+];
+
+final kDummyQuizResults = [
+  for (final _ in [1, 2, 3])
+    QuizResult(
+      id: 'foobang',
+      score: 0,
+      progress: 0.7,
+      userId: 'foobarbaz',
+      quizId: 'quibangbaz',
+      selectedAnswers: [],
+      total: 23,
+      inProgress: true,
+      date: DateTime.now(),
+      currentQuestion: 2,
+      course: Course(
+        id: 'id',
+        code: 'CSC 301',
+        title: 'Data Structures and Algorithms',
+        departmentId: 'departmentId',
+        levelId: 'levelId',
+      ),
+    ),
 ];
