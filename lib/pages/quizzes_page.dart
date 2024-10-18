@@ -184,7 +184,7 @@ class QuizzesPage extends HookConsumerWidget {
                         .map((Course course) => DropdownMenuItem<String>(
                               value: course.id,
                               child: SizedBox(
-                                width: 0.85.sw,
+                                width: 0.8.sw,
                                 child: Text(
                                   '${course.code} - ${course.title}',
                                   overflow: TextOverflow.ellipsis,

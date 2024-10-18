@@ -2,12 +2,14 @@ import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/state/quiz_results.dart';
 import 'package:aceit/state/setup_firestore.dart';
+import 'package:aceit/utils/constants.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -46,7 +48,7 @@ class HomePage extends ConsumerWidget {
         actions: [
           // Support icon button
           IconButton(
-            onPressed: () {},
+            onPressed: () async => launchUrl(Uri.parse(kSupportUrl)),
             iconSize: 49.sp,
             icon: const Icon(Icons.support_agent),
           ),

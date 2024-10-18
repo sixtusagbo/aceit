@@ -16,3 +16,5 @@ Map<int, Color> colorSwatch = {
 };
 
 MaterialColor customBlue = MaterialColor(0xFF458EFF, colorSwatch);
+
+const kSupportUrl = 'https://wa.me/2347080854254';
