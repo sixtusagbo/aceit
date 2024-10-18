@@ -1,7 +1,6 @@
 import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/state/quiz_results.dart';
-import 'package:aceit/state/setup_firestore.dart';
 import 'package:aceit/utils/constants.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/auto_scrolling_carousel.dart';
@@ -124,15 +123,6 @@ class HomePage extends ConsumerWidget {
               loading: CircularProgressIndicator.new,
             ),
             16.verticalSpace,
-
-            /// Setup initial data
-            ElevatedButton(
-              onPressed: () async {
-                final setup = SetupFirestore();
-                await setup.setupInitialData();
-              },
-              child: const Text('Setup Initial Data'),
-            ),
           ],
         ),
       ),
