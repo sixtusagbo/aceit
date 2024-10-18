@@ -1,70 +1,68 @@
-import 'dart:math';
+import 'dart:developer';
 
+import 'package:aceit/models/question.dart';
+import 'package:aceit/state/questions.dart';
+import 'package:aceit/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class QuizPage extends HookWidget {
-  const QuizPage({super.key, this.quizId});
+class QuizPage extends HookConsumerWidget {
+  const QuizPage({super.key, required this.quizId});
 
   static String get routeName => 'quiz';
   static String get routeLocation => ':quizId';
 
-  final String? quizId;
+  final String quizId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final questionsAsync = ref.watch(questionsProvider(quizId));
+
+    return Scaffold(
+      body: questionsAsync.when(
+        data: (questions) => _QuizContent(questions: questions, quizId: quizId),
+        error: (error, _) {
+          log('Error: $error');
+          return const Center(child: Text('An error occurred'));
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
+    );
+  }
+}
+
+class _QuizContent extends HookWidget {
+  const _QuizContent({required this.questions, required this.quizId});
+
+  final List<Question> questions;
+  final String quizId;
 
   @override
   Widget build(BuildContext context) {
-    // Hooks for state management
     final currentQuestionIndex = useState(0);
     final score = useState(0);
     final secondsElapsed = useState(0);
     final isQuizFinished = useState(false);
+    final selectedAnswers = useState(List.filled(questions.length, -1));
 
-    // Timer hook
+    final shuffledOptions = useMemoized(() {
+      return questions.map((q) {
+        final options = List<String>.from(q.options);
+        options.shuffle();
+        return options;
+      }).toList();
+    }, [questions]);
+
     useEffect(() {
       final timer = Stream.periodic(const Duration(seconds: 1), (i) => i);
       final subscription = timer.listen((_) {
-        if (!isQuizFinished.value) secondsElapsed.value++;
+        if (!isQuizFinished.value) {
+          secondsElapsed.value++;
+        }
       });
-      return () => subscription.cancel;
-    }, []);
-
-    // Dummy data for questions
-    final questions = useMemoized(
-        () => [
-              {
-                'question': 'What is the capital of Ebonyi State?',
-                'options': ['Ezillo', 'Abakaliki', 'Ezzangbo', 'Nkalagu'],
-                'answer': 1,
-              },
-              {
-                'question': 'Who is the current president of Nigeria?',
-                'options': ['Buhari', 'Jonathan', 'Tinubu', 'Mimi'],
-                'answer': 2,
-              },
-              {
-                'question': 'What is Nigeria\'s currency?',
-                'options': [
-                  'Naira',
-                  'Dollar',
-                  'Pounds',
-                  'Cedis',
-                ],
-                'answer': 0,
-              },
-            ],
-        []);
-
-    // Hook to manage selected answers
-    final selectedAnswers = useState(List.filled(questions.length, -1));
-
-    // Hook to manage shuffled options
-    final shuffledOptions = useMemoized(() {
-      return questions.map((q) {
-        final options = List<String>.from(q['options'] as Iterable);
-        options.shuffle(Random());
-        return options;
-      }).toList();
+      return subscription.cancel;
     }, []);
 
     void nextQuestion() {
@@ -83,11 +81,9 @@ class QuizPage extends HookWidget {
       isQuizFinished.value = true;
       score.value = selectedAnswers.value.asMap().entries.where((entry) {
         final question = questions[entry.key];
-        final correctAnswer = question['answer'] as int;
         final selectedOptionIndex = entry.value;
         final selectedOption = shuffledOptions[entry.key][selectedOptionIndex];
-        final correctOption = (question['options'] as List)[correctAnswer];
-        return selectedOption == correctOption;
+        return selectedOption == question.options[question.answer];
       }).length;
 
       showDialog(
@@ -117,14 +113,34 @@ class QuizPage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz $quizId', style: TextStyle(fontSize: 18.sp)),
+        title: Consumer(
+          builder: (context, ref, child) {
+            final courseDetailsAsync =
+                ref.watch(courseDetailsByQuizIdProvider(quizId));
+
+            return courseDetailsAsync.when(
+              data: (course) => Text("Quiz on ${course.code}",
+                  style: TextStyle(fontSize: 18.sp)),
+              loading: () => Text('Quiz', style: TextStyle(fontSize: 18.sp)),
+              error: (_, __) => Text('Quiz', style: TextStyle(fontSize: 18.sp)),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Timer display
+            /// Display linear progress indicator
+            LinearProgressIndicator(
+              value: (currentQuestionIndex.value + 1) / questions.length,
+              valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              backgroundColor: Colors.grey[300],
+            ),
+            16.verticalSpace,
+
+            /// Display the time elapsed
             Text(
               isQuizFinished.value
                   ? 'Time: 00:00'
@@ -135,17 +151,16 @@ class QuizPage extends HookWidget {
                   ?.copyWith(fontSize: 18.sp),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20.h),
-            // Question
+            20.verticalSpace,
+
             Text(
-              questions[currentQuestionIndex.value]['question'].toString(),
+              questions[currentQuestionIndex.value].question,
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall
                   ?.copyWith(fontSize: 20.sp),
             ),
             SizedBox(height: 20.h),
-            // Options
             ...shuffledOptions[currentQuestionIndex.value]
                 .asMap()
                 .entries
@@ -163,7 +178,6 @@ class QuizPage extends HookWidget {
                       },
                     )),
             SizedBox(height: 20.h),
-            // Navigation buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -181,7 +195,6 @@ class QuizPage extends HookWidget {
               ],
             ),
             SizedBox(height: 20.h),
-            // Submit button
             ElevatedButton(
               onPressed: submitQuiz,
               child: Text('Submit Quiz', style: TextStyle(fontSize: 16.sp)),
