@@ -4,6 +4,7 @@ import 'package:aceit/state/quiz_results.dart';
 import 'package:aceit/state/setup_firestore.dart';
 import 'package:aceit/utils/constants.dart';
 import 'package:aceit/utils/extensions.dart';
+import 'package:aceit/widgets/auto_scrolling_carousel.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,43 +61,23 @@ class HomePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// TODO: Replace this with carousel of AI generated images with inspirational quotes
-            Text(
-              "Quick Access",
-              style: context.textTheme.titleMedium?.copyWith(
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            16.verticalSpace,
-
-            /// Cards for quick access
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            /// Carousel of banner images
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 200.h),
+              child: AutoScrollingCarousel(
+                autoScrollDuration: const Duration(seconds: 3),
+                transitionDuration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
                 children: [
-                  for (final _ in [1, 2, 3])
-                    Container(
-                      width: 132.w,
-                      height: 101.h,
-                      decoration: ShapeDecoration(
-                        color: Theme.of(context).primaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.r)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Lorem Ipsum',
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          // style: context.textTheme,
-                        ),
+                  for (final image in kBannerImages)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(18.r),
+                      child: Image.asset(
+                        image,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                ].separatedBy(10.horizontalSpace),
+                ], // Customize as needed
               ),
             ),
             20.verticalSpace,
