@@ -1,6 +1,6 @@
 import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
-import 'package:aceit/state/setup.dart';
+import 'package:aceit/state/setup_firestore.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +127,7 @@ class HomePage extends ConsumerWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  final setup = FirestoreSetup();
+                  final setup = SetupFirestore();
                   await setup.setupInitialData();
                 },
                 child: const Text('Setup Initial Data'),

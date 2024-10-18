@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-class FirestoreSetup {
+class SetupFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> setupInitialData() async {
@@ -61,8 +61,8 @@ class FirestoreSetup {
 
   Future<Map<String, String>> _setupFaculties(String schoolId) async {
     final faculties = [
-      {'name': 'Faculty of Physical Sciences', 'school-id': schoolId},
-      {'name': 'Faculty of Engineering', 'school-id': schoolId},
+      {'name': 'Faculty of Physical Sciences', 'school_id': schoolId},
+      {'name': 'Faculty of Engineering', 'school_id': schoolId},
     ];
 
     Map<String, String> facultyIds = {};
@@ -76,8 +76,8 @@ class FirestoreSetup {
 
   Future<Map<String, String>> _setupDepartments(String facultyId) async {
     final departments = [
-      {'name': 'Computer Science', 'faculty-id': facultyId},
-      {'name': 'Mathematics', 'faculty-id': facultyId},
+      {'name': 'Computer Science', 'faculty_id': facultyId},
+      {'name': 'Mathematics', 'faculty_id': facultyId},
     ];
 
     Map<String, String> departmentIds = {};
@@ -128,70 +128,70 @@ class FirestoreSetup {
       {
         'code': 'CSC 101',
         'title': 'Introduction to Computer Science',
-        'level-id': levelIds['100 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['100 Level'],
+        'semester_id': semesterIds['First Semester']
       },
       {
         'code': 'MAT 101',
         'title': 'Elementary Mathematics I',
-        'level-id': levelIds['100 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['100 Level'],
+        'semester_id': semesterIds['First Semester']
       },
       {
         'code': 'CSC 102',
         'title': 'Introduction to Programming',
-        'level-id': levelIds['100 Level'],
-        'semester-id': semesterIds['Second Semester']
+        'level_id': levelIds['100 Level'],
+        'semester_id': semesterIds['Second Semester']
       },
       {
         'code': 'MAT 102',
         'title': 'Elementary Mathematics II',
-        'level-id': levelIds['100 Level'],
-        'semester-id': semesterIds['Second Semester']
+        'level_id': levelIds['100 Level'],
+        'semester_id': semesterIds['Second Semester']
       },
       {
         'code': 'CSC 301',
         'title': 'Data Structures',
-        'level-id': levelIds['300 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['300 Level'],
+        'semester_id': semesterIds['First Semester']
       },
       {
         'code': 'MAT 301',
         'title': 'Advanced Calculus',
-        'level-id': levelIds['300 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['300 Level'],
+        'semester_id': semesterIds['First Semester']
       },
       {
         'code': 'CSC 302',
         'title': 'Algorithms',
-        'level-id': levelIds['300 Level'],
-        'semester-id': semesterIds['Second Semester']
+        'level_id': levelIds['300 Level'],
+        'semester_id': semesterIds['Second Semester']
       },
       {
         'code': 'MAT 302',
         'title': 'Complex Analysis',
-        'level-id': levelIds['300 Level'],
-        'semester-id': semesterIds['Second Semester']
+        'level_id': levelIds['300 Level'],
+        'semester_id': semesterIds['Second Semester']
       },
       {
         'code': 'CSC 401',
         'title': 'Software Engineering',
-        'level-id': levelIds['400 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['400 Level'],
+        'semester_id': semesterIds['First Semester']
       },
       {
         'code': 'MAT 401',
         'title': 'Numerical Analysis',
-        'level-id': levelIds['400 Level'],
-        'semester-id': semesterIds['First Semester']
+        'level_id': levelIds['400 Level'],
+        'semester_id': semesterIds['First Semester']
       },
     ];
 
     for (var course in courses) {
       await _firestore.collection('courses').add({
         ...course,
-        'school-id': schoolId,
-        'department-id': departmentId,
+        'school_id': schoolId,
+        'department_id': departmentId,
       });
     }
   }
@@ -246,7 +246,7 @@ class FirestoreSetup {
       DocumentReference quizRef = await _firestore.collection('quizzes').add({
         'type': 'practice',
         'owner': 'system',
-        'course-id': courseDoc.id,
+        'course_id': courseDoc.id,
         'year': 2024,
       });
 

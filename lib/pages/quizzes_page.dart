@@ -1,55 +1,49 @@
+import 'dart:developer';
+
+import 'package:aceit/models/course.dart';
+import 'package:aceit/models/department.dart';
+import 'package:aceit/models/faculty.dart';
+import 'package:aceit/models/level.dart';
+import 'package:aceit/models/school.dart';
+import 'package:aceit/models/semester.dart';
+import 'package:aceit/state/courses.dart';
+import 'package:aceit/state/departments.dart';
+import 'package:aceit/state/faculties.dart';
+import 'package:aceit/state/levels.dart';
+import 'package:aceit/state/quizzes.dart';
+import 'package:aceit/state/schools.dart';
+import 'package:aceit/state/semesters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class QuizzesPage extends HookWidget {
+class QuizzesPage extends HookConsumerWidget {
   const QuizzesPage({super.key});
 
   static String get routeName => 'quizzes';
   static String get routeLocation => '/$routeName';
 
   @override
-  Widget build(BuildContext context) {
-    // New quiz form with select school, select level, select course, select semester(optional) and a button to start quiz. Use a dummy data for the select options for now.
-    // Create global key for form
+  Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(GlobalKey<FormState>.new);
-    // Create the input states
-    final school = useState('');
-    final level = useState('');
-    final course = useState('');
-    final semester = useState('');
 
-    // Dummy data for select options
-    final schools = [
-      'Nnamdi Azikiwe University',
-      'University of Nigeria, Nsukka',
-      'Ebonyi State University',
-      'University of Lagos',
-      'University of Ibadan',
-      'University of Benin',
-      'University of Abuja',
-      'University of Port Harcourt',
-    ];
-    final levels = [
-      '100 Level',
-      '200 Level',
-      '300 Level',
-      '400 Level',
-    ];
-    final semesters = [
-      'First Semester',
-      'Second Semester',
-    ];
-    final courses = [
-      'CSC 101 - Intro to Computer Science',
-      'CSC 102 - Intro to Programming',
-      'CSC 201 - DSA',
-      'CSC 202 - Software Engineering',
-      'CSC 301 - Operating Systems',
-      'CSC 302 - Computer Networks',
-      'CSC 401 - DBMS',
-      'CSC 402 - Web Development',
-    ];
+    final schoolsAsync = ref.watch(schoolsProvider);
+    final selectedSchool = ref.watch(selectedSchoolProvider);
+    final facultiesAsync = ref.watch(facultiesProvider(selectedSchool));
+    final selectedFaculty = ref.watch(selectedFacultyProvider);
+    final departmentsAsync = ref.watch(departmentsProvider(selectedFaculty));
+    final selectedDepartment = ref.watch(selectedDepartmentProvider);
+    final levelsAsync = ref.watch(levelsProvider);
+    final selectedLevel = ref.watch(selectedLevelProvider);
+    final semestersAsync = ref.watch(semestersProvider);
+    final selectedSemester = ref.watch(selectedSemesterProvider);
+    final coursesAsync = ref.watch(coursesProvider((
+      departmentId: selectedDepartment,
+      levelId: selectedLevel,
+      semesterId: selectedSemester
+    )));
+    final selectedCourse = ref.watch(selectedCourseProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,91 +53,178 @@ class QuizzesPage extends HookWidget {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
-              // Select school
-              DropdownButtonFormField<String>(
-                value: school.value.isEmpty ? null : school.value,
-                decoration: const InputDecoration(labelText: 'Select School'),
-                items: schools.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  school.value = newValue!;
-                },
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please select a school'
-                    : null,
+              schoolsAsync.when(
+                data: (schools) => DropdownButtonFormField<String>(
+                  value: selectedSchool,
+                  decoration: const InputDecoration(labelText: 'Select School'),
+                  items: schools
+                      .map((School school) => DropdownMenuItem<String>(
+                            value: school.id,
+                            child: Text(school.name,
+                                overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (newValue) => ref
+                      .read(selectedSchoolProvider.notifier)
+                      .state = newValue,
+                  validator: (value) =>
+                      value == null ? 'Please select a school' : null,
+                ),
+                loading: CircularProgressIndicator.new,
+                error: (_, __) => const Text('Error loading schools'),
               ),
               const SizedBox(height: 16.0),
-              // Select level
-              DropdownButtonFormField<String>(
-                value: level.value.isEmpty ? null : level.value,
-                decoration: const InputDecoration(labelText: 'Select Level'),
-                items: levels.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  level.value = newValue!;
-                },
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please select a level'
-                    : null,
-              ),
-              const SizedBox(height: 16.0),
-              // Select semester (optional)
-              DropdownButtonFormField<String>(
-                value: semester.value.isEmpty ? null : semester.value,
-                decoration: const InputDecoration(
-                    labelText: 'Select Semester (Optional)'),
-                items: semesters.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  semester.value = newValue!;
+              facultiesAsync.when(
+                data: (faculties) => DropdownButtonFormField<String>(
+                  value: selectedFaculty,
+                  decoration:
+                      const InputDecoration(labelText: 'Select Faculty'),
+                  items: faculties
+                      .map((Faculty faculty) => DropdownMenuItem<String>(
+                            value: faculty.id,
+                            child: Text(faculty.name,
+                                overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (newValue) => ref
+                      .read(selectedFacultyProvider.notifier)
+                      .state = newValue,
+                  validator: (value) =>
+                      value == null ? 'Please select a faculty' : null,
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (err, __) {
+                  log(err.toString(), name: 'QuizzesPage');
+                  return const Text('Error loading faculties');
                 },
               ),
               const SizedBox(height: 16.0),
-              // Select course
-              DropdownButtonFormField<String>(
-                value: course.value.isEmpty ? null : course.value,
-                decoration: const InputDecoration(labelText: 'Select Course'),
-                items: courses.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis),
+              departmentsAsync.when(
+                data: (departments) => DropdownButtonFormField<String>(
+                  value: selectedDepartment,
+                  decoration:
+                      const InputDecoration(labelText: 'Select Department'),
+                  items: departments
+                      .map((Department department) => DropdownMenuItem<String>(
+                            value: department.id,
+                            child: Text(department.name,
+                                overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (newValue) => ref
+                      .read(selectedDepartmentProvider.notifier)
+                      .state = newValue,
+                  validator: (value) =>
+                      value == null ? 'Please select a department' : null,
+                ),
+                loading: CircularProgressIndicator.new,
+                error: (_, __) => const Text('Error loading departments'),
+              ),
+              const SizedBox(height: 16.0),
+              levelsAsync.when(
+                data: (levels) => DropdownButtonFormField<String>(
+                  value: selectedLevel,
+                  decoration: const InputDecoration(labelText: 'Select Level'),
+                  items: levels
+                      .map((Level level) => DropdownMenuItem<String>(
+                            value: level.id,
+                            child: Text(level.name,
+                                overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (newValue) =>
+                      ref.read(selectedLevelProvider.notifier).state = newValue,
+                  validator: (value) =>
+                      value == null ? 'Please select a level' : null,
+                ),
+                loading: CircularProgressIndicator.new,
+                error: (_, __) => const Text('Error loading levels'),
+              ),
+              const SizedBox(height: 16.0),
+              semestersAsync.when(
+                data: (semesters) => DropdownButtonFormField<String>(
+                  value: selectedSemester,
+                  decoration: const InputDecoration(
+                      labelText: 'Select Semester (Optional)'),
+                  items: semesters
+                      .map((Semester semester) => DropdownMenuItem<String>(
+                            value: semester.id,
+                            child: Text(semester.name,
+                                overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (newValue) {
+                    ref.read(selectedSemesterProvider.notifier).state =
+                        newValue;
+                    // Reset course when semester changes
+                    ref.read(selectedCourseProvider.notifier).state = null;
+                  },
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const Text('Error loading semesters'),
+              ),
+              const SizedBox(height: 16.0),
+              coursesAsync.when(
+                data: (courses) {
+                  final isCurrentCourseValid =
+                      courses.any((course) => course.id == selectedCourse);
+                  if (!isCurrentCourseValid) {
+                    // If not valid, reset the selected course
+                    ref.read(selectedCourseProvider.notifier).state = null;
+                  }
+
+                  return DropdownButtonFormField<String>(
+                    value: isCurrentCourseValid ? selectedCourse : null,
+                    decoration:
+                        const InputDecoration(labelText: 'Select Course'),
+                    items: courses
+                        .map((Course course) => DropdownMenuItem<String>(
+                              value: course.id,
+                              child: Text(
+                                '${course.code} - ${course.title}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (newValue) => ref
+                        .read(selectedCourseProvider.notifier)
+                        .state = newValue,
+                    validator: (value) =>
+                        value == null ? 'Please select a course' : null,
                   );
-                }).toList(),
-                onChanged: (newValue) {
-                  course.value = newValue!;
                 },
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please select a course'
-                    : null,
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const Text('Error loading courses'),
               ),
               const SizedBox(height: 32.0),
-              // Start quiz button
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      // Start the quiz
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Starting quiz...')),
-                      );
+                      final String? quizId = await ref
+                          .read(quizIdByCourseProvider(selectedCourse!).future);
+                      if (quizId == null) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('No quiz found for selected course')),
+                          );
+                        }
+                        return;
+                      }
+                      log('Quiz ID: $quizId', name: 'QuizzesPage');
 
-                      // For now, navigate to the quiz page
-                      context.push('${QuizzesPage.routeLocation}/1');
+                      if (context.mounted) {
+                        context.push('${QuizzesPage.routeLocation}/$quizId');
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Please fill in all fields')),
+                      );
                     }
                   },
                   child: const Text('Start Quiz'),
