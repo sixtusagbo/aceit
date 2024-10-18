@@ -2,6 +2,8 @@ import 'package:aceit/models/course.dart';
 import 'package:aceit/state/firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+/// Provider that returns the list of courses for a given department and level.
+/// It can also filter by semester.
 final coursesProvider = StreamProvider.family<
     List<Course>,
     ({
@@ -30,3 +32,15 @@ final coursesProvider = StreamProvider.family<
 });
 
 final selectedCourseProvider = StateProvider<String?>((ref) => null);
+
+/// Provider that returns the course details for a given quiz id.
+final courseDetailsByQuizIdProvider =
+    FutureProvider.family<Course, String>((ref, quizId) async {
+  final firestore = ref.watch(firestoreProvider);
+  final quizDoc = await firestore.collection('quizzes').doc(quizId).get();
+  final courseId = quizDoc.data()!['course_id'] as String;
+  final courseDoc = await firestore.collection('courses').doc(courseId).get();
+  final course = Course.fromMap({'id': courseDoc.id, ...?courseDoc.data()});
+
+  return course;
+});

@@ -1,3 +1,4 @@
+import 'package:aceit/models/course.dart';
 import 'package:dart_mappable/dart_mappable.dart';
 
 part 'quiz_result.mapper.dart';
@@ -14,6 +15,11 @@ class QuizResult with QuizResultMappable {
   final int total;
   final bool inProgress;
   final DateTime date;
+  Course? course;
+  final double progress;
+
+  /// The index of the current question the user is on.
+  final int currentQuestion;
 
   QuizResult({
     required this.id,
@@ -24,6 +30,9 @@ class QuizResult with QuizResultMappable {
     required this.total,
     required this.inProgress,
     required this.date,
+    this.course,
+    required this.currentQuestion,
+    required this.progress,
   });
 
   static const fromMap = QuizResultMapper.fromMap;

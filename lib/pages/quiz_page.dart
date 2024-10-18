@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:aceit/models/question.dart';
 import 'package:aceit/models/quiz_result.dart';
 import 'package:aceit/state/auth.dart';
+import 'package:aceit/state/courses.dart';
 import 'package:aceit/state/questions.dart';
 import 'package:aceit/state/quiz_results.dart';
 import 'package:aceit/utils/constants.dart';
@@ -94,6 +95,8 @@ class _QuizContent extends HookConsumerWidget {
         total: questions.length,
         inProgress: true,
         date: DateTime.now(),
+        currentQuestion: currentQuestionIndex.value,
+        progress: (currentQuestionIndex.value + 1) / questions.length,
       );
 
       await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);
@@ -118,6 +121,8 @@ class _QuizContent extends HookConsumerWidget {
         total: questions.length,
         inProgress: false,
         date: DateTime.now(),
+        currentQuestion: currentQuestionIndex.value,
+        progress: 1.0,
       );
 
       await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);

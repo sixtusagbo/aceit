@@ -1,5 +1,6 @@
 import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/state/auth.dart';
+import 'package:aceit/state/quiz_results.dart';
 import 'package:aceit/state/setup_firestore.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:aceit/widgets/course_progress_widget.dart';
@@ -18,6 +19,7 @@ class HomePage extends ConsumerWidget {
     final name = ref.watch(authStateProvider.select(
       (value) => value.valueOrNull?.displayName,
     ));
+    final inProgressQuizzes = ref.watch(inProgressQuizProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,6 +58,7 @@ class HomePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// TODO: Replace this with carousel of AI generated images with inspirational quotes
             Text(
               "Quick Access",
               style: context.textTheme.titleMedium?.copyWith(
@@ -96,42 +99,55 @@ class HomePage extends ConsumerWidget {
             ),
             20.verticalSpace,
 
-            Text(
-              "Continue with previous courses",
-              style: context.textTheme.titleMedium?.copyWith(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-              ),
+            /// Continue in-progress quiz
+            inProgressQuizzes.when(
+              data: (results) => results.isEmpty
+                  ? const Text('No in-progress quizzes')
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Pick up where you left off",
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        16.verticalSpace,
+                        Container(
+                          width: double.infinity,
+                          decoration: ShapeDecoration(
+                            color: Theme.of(context).primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.r),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              for (final result in results)
+                                CourseProgressWidget(
+                                  courseCode: result.course!.code,
+                                  courseTitle: result.course!.title,
+                                  progress: result.progress,
+                                  quizId: result.quizId,
+                                )
+                            ].separatedBy(const Divider()),
+                          ),
+                        ),
+                      ],
+                    ),
+              error: (err, _) => Text('Error: $err'),
+              loading: CircularProgressIndicator.new,
             ),
             16.verticalSpace,
 
-            /// Continue with previous courses
-            Container(
-              width: double.infinity,
-              decoration: ShapeDecoration(
-                color: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.r),
-                ),
-              ),
-              child: Column(
-                children: [
-                  const CourseProgressWidget(),
-                  const CourseProgressWidget(),
-                  const CourseProgressWidget(),
-                ].separatedBy(const Divider()),
-              ),
-            ),
-            16.verticalSpace,
-
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final setup = SetupFirestore();
-                  await setup.setupInitialData();
-                },
-                child: const Text('Setup Initial Data'),
-              ),
+            /// Setup initial data
+            ElevatedButton(
+              onPressed: () async {
+                final setup = SetupFirestore();
+                await setup.setupInitialData();
+              },
+              child: const Text('Setup Initial Data'),
             ),
           ],
         ),
