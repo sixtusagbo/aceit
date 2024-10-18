@@ -4,7 +4,6 @@ import 'package:aceit/pages/login_page.dart';
 import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/pages/quiz_page.dart';
 import 'package:aceit/pages/quizzes_page.dart';
-import 'package:aceit/pages/settings_page.dart';
 import 'package:aceit/pages/splash_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/widgets/scaffold_with_navbar.dart';

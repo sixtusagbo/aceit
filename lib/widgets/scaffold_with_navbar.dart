@@ -1,6 +1,5 @@
 import 'package:aceit/pages/home_page.dart';
 import 'package:aceit/pages/quizzes_page.dart';
-import 'package:aceit/pages/settings_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,11 +35,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
             size: 30,
             color: Colors.white,
           ),
-          Icon(
-            Icons.settings,
-            size: 30,
-            color: Colors.white,
-          ),
         ],
         index: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),
@@ -54,7 +48,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return switch (location) {
       final String l when l == HomePage.routeLocation => 0,
       final String l when l == QuizzesPage.routeLocation => 1,
-      final String l when l == SettingsPage.routeLocation => 2,
       _ => 0,
     };
   }
@@ -66,9 +59,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
         break;
       case 1:
         context.go(QuizzesPage.routeLocation);
-        break;
-      case 2:
-        context.go(SettingsPage.routeLocation);
         break;
       default:
         context.go(HomePage.routeLocation);

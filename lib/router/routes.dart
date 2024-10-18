@@ -38,29 +38,25 @@ final appRoutes = [
         builder: (context, state) => const HomePage(),
       ),
       GoRoute(
-          path: QuizzesPage.routeLocation,
-          name: QuizzesPage.routeName,
-          builder: (context, state) => const QuizzesPage(),
-          routes: [
-            // Add a route for each quiz
-            GoRoute(
-              path: QuizPage.routeLocation,
-              name: QuizPage.routeName,
-              parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) {
-                final pathParams = state.pathParameters;
-                final queryParams = state.uri.queryParameters;
-                return QuizPage(
-                  quizId: pathParams['quizId'].toString(),
-                  resultId: queryParams['result'],
-                );
-              },
-            )
-          ]),
-      GoRoute(
-        path: SettingsPage.routeLocation,
-        name: SettingsPage.routeName,
-        builder: (context, state) => const SettingsPage(),
+        path: QuizzesPage.routeLocation,
+        name: QuizzesPage.routeName,
+        builder: (context, state) => const QuizzesPage(),
+        routes: [
+          // Add a route for each quiz
+          GoRoute(
+            path: QuizPage.routeLocation,
+            name: QuizPage.routeName,
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final pathParams = state.pathParameters;
+              final queryParams = state.uri.queryParameters;
+              return QuizPage(
+                quizId: pathParams['quizId'].toString(),
+                resultId: queryParams['result'],
+              );
+            },
+          )
+        ],
       ),
     ],
   ),
