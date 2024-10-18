@@ -18,3 +18,9 @@ Map<int, Color> colorSwatch = {
 MaterialColor customBlue = MaterialColor(0xFF458EFF, colorSwatch);
 
 const kSupportUrl = 'https://wa.me/2347080854254';
+
+const kBannerImages = [
+  'assets/images/progress-reports.webp',
+  'assets/images/question-bank.webp',
+  'assets/images/result-analysis.webp',
+];
