@@ -15,6 +15,7 @@ class QuizResult with QuizResultMappable {
 
   /// The total number of questions in the quiz.
   final int total;
+  @MappableField(key: 'in_progress')
   final bool inProgress;
   final DateTime date;
   Course? course;

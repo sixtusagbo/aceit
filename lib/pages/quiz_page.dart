@@ -125,9 +125,10 @@ class _QuizContent extends HookConsumerWidget {
         currentQuestion: currentQuestionIndex.value,
         progress: (currentQuestionIndex.value + 1) / questions.length,
         secondsElapsed: secondsElapsed.value,
+        course: null,
       );
 
-      await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);
+      await ref.read(saveQuizResultProvider(quizResult).future);
     }
 
     Future<void> submitQuiz() async {
@@ -152,9 +153,10 @@ class _QuizContent extends HookConsumerWidget {
         currentQuestion: currentQuestionIndex.value,
         progress: 1.0,
         secondsElapsed: secondsElapsed.value,
+        course: null,
       );
 
-      await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);
+      await ref.read(saveQuizResultProvider(quizResult).future);
 
       if (context.mounted) {
         await showDialog<bool>(
