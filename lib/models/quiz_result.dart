@@ -12,6 +12,8 @@ class QuizResult with QuizResultMappable {
   final String quizId;
   final int? score;
   final List<int?> selectedAnswers;
+
+  /// The total number of questions in the quiz.
   final int total;
   final bool inProgress;
   final DateTime date;
@@ -20,6 +22,7 @@ class QuizResult with QuizResultMappable {
 
   /// The index of the current question the user is on.
   final int currentQuestion;
+  final int secondsElapsed;
 
   QuizResult({
     required this.id,
@@ -32,7 +35,8 @@ class QuizResult with QuizResultMappable {
     required this.date,
     this.course,
     required this.currentQuestion,
-    required this.progress,
+    this.progress = 0.0,
+    this.secondsElapsed = 0,
   });
 
   static const fromMap = QuizResultMapper.fromMap;

@@ -12,12 +12,14 @@ class CourseProgressWidget extends StatelessWidget {
     required this.courseTitle,
     required this.progress,
     required this.quizId,
+    required this.resultId,
   });
 
   final String courseCode;
   final String courseTitle;
   final double progress;
   final String quizId;
+  final String resultId;
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +77,8 @@ class CourseProgressWidget extends StatelessWidget {
 
               /// Circle arrow right icon
               IconButton(
-                onPressed: () =>
-                    context.go('${QuizzesPage.routeLocation}/$quizId'),
+                onPressed: () => context.push(
+                    '${QuizzesPage.routeLocation}/$quizId?result=$resultId'),
                 icon: const Icon(
                   Icons.arrow_forward_ios,
                 ),

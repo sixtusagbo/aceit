@@ -48,8 +48,12 @@ final appRoutes = [
               name: QuizPage.routeName,
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) {
-                final arguments = state.pathParameters;
-                return QuizPage(quizId: arguments['quizId'].toString());
+                final pathParams = state.pathParameters;
+                final queryParams = state.uri.queryParameters;
+                return QuizPage(
+                  quizId: pathParams['quizId'].toString(),
+                  resultId: queryParams['result'],
+                );
               },
             )
           ]),

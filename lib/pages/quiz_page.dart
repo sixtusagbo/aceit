@@ -14,12 +14,17 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class QuizPage extends HookConsumerWidget {
-  const QuizPage({super.key, required this.quizId});
+  const QuizPage({
+    super.key,
+    required this.quizId,
+    required this.resultId,
+  });
 
   static String get routeName => 'quiz';
   static String get routeLocation => ':quizId';
 
   final String quizId;
+  final String? resultId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +32,8 @@ class QuizPage extends HookConsumerWidget {
 
     return Scaffold(
       body: questionsAsync.when(
-        data: (questions) => _QuizContent(questions: questions, quizId: quizId),
+        data: (questions) => _QuizContent(
+            questions: questions, quizId: quizId, resultId: resultId),
         error: (error, _) {
           log('Error: $error');
           return const Center(child: Text('An error occurred'));
@@ -39,10 +45,15 @@ class QuizPage extends HookConsumerWidget {
 }
 
 class _QuizContent extends HookConsumerWidget {
-  const _QuizContent({required this.questions, required this.quizId});
+  const _QuizContent({
+    required this.questions,
+    required this.quizId,
+    required this.resultId,
+  });
 
   final List<Question> questions;
   final String quizId;
+  final String? resultId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,6 +84,22 @@ class _QuizContent extends HookConsumerWidget {
       return subscription.cancel;
     }, []);
 
+    // Restore progress if any
+    useEffect(() {
+      if (resultId != null) {
+        final result = ref.read(currentQuizProgressProvider(resultId!));
+        if (result != null) {
+          currentQuestionIndex.value = result.currentQuestion;
+          selectedAnswers.value = List<int?>.from(result.selectedAnswers);
+          secondsElapsed.value = result.secondsElapsed;
+          if (!result.inProgress) {
+            isQuizFinished.value = true;
+          }
+        }
+      }
+      return null;
+    }, []);
+
     void nextQuestion() {
       if (currentQuestionIndex.value < questions.length - 1) {
         currentQuestionIndex.value++;
@@ -97,6 +124,7 @@ class _QuizContent extends HookConsumerWidget {
         date: DateTime.now(),
         currentQuestion: currentQuestionIndex.value,
         progress: (currentQuestionIndex.value + 1) / questions.length,
+        secondsElapsed: secondsElapsed.value,
       );
 
       await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);
@@ -123,6 +151,7 @@ class _QuizContent extends HookConsumerWidget {
         date: DateTime.now(),
         currentQuestion: currentQuestionIndex.value,
         progress: 1.0,
+        secondsElapsed: secondsElapsed.value,
       );
 
       await ref.read(quizResultsProvider.notifier).saveQuizResult(quizResult);

@@ -130,6 +130,7 @@ class HomePage extends ConsumerWidget {
                                   courseTitle: result.course!.title,
                                   progress: result.progress,
                                   quizId: result.quizId,
+                                  resultId: result.id,
                                 )
                             ].separatedBy(const Divider()),
                           ),

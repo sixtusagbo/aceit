@@ -33,6 +33,17 @@ final inProgressQuizProvider = FutureProvider<List<QuizResult>>((ref) async {
   return results.toList();
 });
 
+/// Returns current quiz progress with result id if any or null otherwise
+final currentQuizProgressProvider =
+    Provider.family<QuizResult?, String>((ref, resultId) {
+  final userId = ref.watch(userIdProvider);
+  final results = ref.watch(quizResultsProvider);
+
+  return results.firstWhereOrNull(
+    (r) => r.userId == userId && r.id == resultId,
+  );
+});
+
 class QuizResultsNotifier extends StateNotifier<List<QuizResult>> {
   final Ref _ref;
 
