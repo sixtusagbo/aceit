@@ -1,4 +1,3 @@
-import 'package:aceit/pages/quizzes_page.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -82,8 +81,7 @@ class CourseProgressWidget extends StatelessWidget {
             IconButton(
               onPressed: isDummy
                   ? null
-                  : () => context.push(
-                      '${QuizzesPage.routeLocation}/$quizId?result=$resultId'),
+                  : () => context.push('/quiz/$quizId?result=$resultId'),
               icon: const Icon(
                 Icons.arrow_forward_ios,
               ),

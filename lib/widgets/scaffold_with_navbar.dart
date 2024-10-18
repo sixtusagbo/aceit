@@ -1,5 +1,5 @@
 import 'package:aceit/pages/home_page.dart';
-import 'package:aceit/pages/quizzes_page.dart';
+import 'package:aceit/pages/new_quiz_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,7 +47,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
     return switch (location) {
       final String l when l == HomePage.routeLocation => 0,
-      final String l when l == QuizzesPage.routeLocation => 1,
+      final String l when l == NewQuizPage.routeLocation => 1,
       _ => 0,
     };
   }
@@ -58,7 +58,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
         context.go(HomePage.routeLocation);
         break;
       case 1:
-        context.go(QuizzesPage.routeLocation);
+        context.go(NewQuizPage.routeLocation);
         break;
       default:
         context.go(HomePage.routeLocation);

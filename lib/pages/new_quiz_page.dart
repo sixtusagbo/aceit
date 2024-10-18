@@ -20,11 +20,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class QuizzesPage extends HookConsumerWidget {
-  const QuizzesPage({super.key});
+class NewQuizPage extends HookConsumerWidget {
+  const NewQuizPage({super.key});
 
-  static String get routeName => 'quizzes';
-  static String get routeLocation => '/$routeName';
+  static String get routeName => 'new-quiz';
+  static String get routeLocation => '/quiz/new';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -217,7 +217,7 @@ class QuizzesPage extends HookConsumerWidget {
                     log('Quiz ID: $quizId', name: 'QuizzesPage');
 
                     if (context.mounted) {
-                      context.push('${QuizzesPage.routeLocation}/$quizId');
+                      context.push('/quiz/$quizId');
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

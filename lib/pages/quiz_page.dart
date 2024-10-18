@@ -21,7 +21,7 @@ class QuizPage extends HookConsumerWidget {
   });
 
   static String get routeName => 'quiz';
-  static String get routeLocation => ':quizId';
+  static String get routeLocation => '/quiz/:quizId';
 
   final String quizId;
   final String? resultId;
