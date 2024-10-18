@@ -1,12 +1,25 @@
+import 'package:aceit/pages/quizzes_page.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class CourseProgressWidget extends StatelessWidget {
   const CourseProgressWidget({
     super.key,
+    required this.courseCode,
+    required this.courseTitle,
+    required this.progress,
+    required this.quizId,
+    required this.resultId,
   });
+
+  final String courseCode;
+  final String courseTitle;
+  final double progress;
+  final String quizId;
+  final String resultId;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +41,7 @@ class CourseProgressWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'CSC 101',
+                    courseCode,
                     style: context.textTheme.bodyLarge?.copyWith(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w700,
@@ -36,12 +49,13 @@ class CourseProgressWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Introduction to Computer Science',
+                    courseTitle,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   8.verticalSpace,
 
@@ -51,11 +65,11 @@ class CourseProgressWidget extends StatelessWidget {
                     animation: true,
                     lineHeight: 8.h,
                     animationDuration: 2000,
-                    percent: 0.75,
+                    percent: progress,
                     barRadius: Radius.circular(40.r),
                     backgroundColor: Colors.white,
                     progressColor: Colors.greenAccent,
-                    trailing: const Text("75.0%"),
+                    trailing: Text('${(progress * 100).toInt()}%'),
                     padding: EdgeInsets.only(right: 10.w),
                   )
                 ],
@@ -63,7 +77,8 @@ class CourseProgressWidget extends StatelessWidget {
 
               /// Circle arrow right icon
               IconButton(
-                onPressed: () {},
+                onPressed: () => context.push(
+                    '${QuizzesPage.routeLocation}/$quizId?result=$resultId'),
                 icon: const Icon(
                   Icons.arrow_forward_ios,
                 ),
