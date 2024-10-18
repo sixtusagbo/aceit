@@ -57,6 +57,33 @@ final appRoutes = [
     },
   ),
   GoRoute(
+    path: ResultAnalysisPage.routeLocation,
+    name: ResultAnalysisPage.routeName,
+    redirect: (context, state) {
+      final extra = state.extra as Map<String, dynamic>;
+
+      // Validate the extra data types, if type is incorrect, go back to home
+      if (extra['questions'] is! List<Question> ||
+          extra['shuffledOptions'] is! List<List<String>> ||
+          extra['selectedAnswers'] is! List<int?> ||
+          extra['score'] is! int) {
+        return HomePage.routeLocation;
+      }
+
+      return null;
+    },
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>;
+
+      return ResultAnalysisPage(
+        questions: extra['questions'] as List<Question>,
+        shuffledOptions: extra['shuffledOptions'] as List<List<String>>,
+        selectedAnswers: extra['selectedAnswers'] as List<int?>,
+        score: extra['score'] as int,
+      );
+    },
+  ),
+  GoRoute(
     path: ProfilePage.routeLocation,
     name: ProfilePage.routeName,
     builder: (context, state) => const ProfilePage(),

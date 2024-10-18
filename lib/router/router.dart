@@ -1,9 +1,11 @@
+import 'package:aceit/models/question.dart';
 import 'package:aceit/pages/forgot_password_page.dart';
 import 'package:aceit/pages/home_page.dart';
 import 'package:aceit/pages/login_page.dart';
 import 'package:aceit/pages/profile_page.dart';
 import 'package:aceit/pages/quiz_page.dart';
 import 'package:aceit/pages/new_quiz_page.dart';
+import 'package:aceit/pages/result_analysis_page.dart';
 import 'package:aceit/pages/splash_page.dart';
 import 'package:aceit/state/auth.dart';
 import 'package:aceit/widgets/scaffold_with_navbar.dart';
