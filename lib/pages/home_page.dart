@@ -15,7 +15,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final name = ref.watch(authProvider.select(
+    final name = ref.watch(authStateProvider.select(
       (value) => value.valueOrNull?.displayName,
     ));
 

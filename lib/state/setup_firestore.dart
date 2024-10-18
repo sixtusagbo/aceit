@@ -214,7 +214,7 @@ class SetupFirestore {
       {
         'type': 'mcq',
         'question': 'Which of the following is not a programming language?',
-        'options': ['Java', 'Python', 'HTML', 'Photoshop'],
+        'options': ['C', 'Python', 'Javascript', 'Photoshop'],
         'answer': 3,
       },
       {
