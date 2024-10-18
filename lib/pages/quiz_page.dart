@@ -178,9 +178,15 @@ class _QuizContent extends HookConsumerWidget {
               TextButton(
                 onPressed: () {
                   context.pop(); // Close dialog
+                  context.push('/result-analysis', extra: {
+                    'questions': questions,
+                    'shuffledOptions': shuffledOptions,
+                    'selectedAnswers': selectedAnswers.value,
+                    'score': score,
+                  });
                   canPop.value = true;
                 },
-                child: Text('Okay', style: TextStyle(fontSize: 14.sp)),
+                child: Text('View Results', style: TextStyle(fontSize: 14.sp)),
               ),
             ],
           ),

@@ -8,6 +8,7 @@ class Question with QuestionMappable {
   final String type;
   final String question;
   final List<String> options;
+  // TODO: Add weightage to the question
 
   /// The index of the correct answer in the [options] list.
   final int answer;
