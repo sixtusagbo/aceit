@@ -15,9 +15,14 @@ final quizResultsStreamProvider = StreamProvider<List<QuizResult>>((ref) {
 
 final quizResultProvider = Provider.family<QuizResult?, String>((ref, quizId) {
   final resultsAsyncValue = ref.watch(quizResultsStreamProvider);
+  final userId = ref.watch(userIdProvider);
   return resultsAsyncValue
-      .whenData((results) =>
-          results.firstWhereOrNull((result) => result.quizId == quizId))
+      .whenData((results) => results.firstWhereOrNull(
+            (result) =>
+                result.quizId == quizId &&
+                result.userId == userId &&
+                result.inProgress,
+          ))
       .value;
 });
 
