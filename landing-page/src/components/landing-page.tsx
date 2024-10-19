@@ -15,11 +15,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function LandingPageComponent() {
+export function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
-        <a className="flex items-center justify-center" href="#">
+        <a className="flex items-center justify-center" href="/">
           <GraduationCap className="h-6 w-6 text-[#458EFF]" />
           <span className="ml-2 text-2xl font-bold text-[#458EFF]">Ace iT</span>
         </a>
@@ -184,10 +184,16 @@ export function LandingPageComponent() {
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          © 2024 Ace iT. All rights reserved.
+          © 2024{" "}
+          <a href="/" className="text-[#458EFF]">
+            Ace iT
+          </a>
+          . All rights reserved.
         </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <a className="text-xs hover:underline underline-offset-4" href="#">
+          <a
+            className="text-xs hover:underline underline-offset-4"
+            href="/privacy-policy">
             Privacy Policy
           </a>
         </nav>
