@@ -1,0 +1,36 @@
+name: 🚀 Deploy landing page
+
+on: 
+  push:
+    branches:
+      - landing-page
+    paths:
+      - 'landing-page/**'
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v3
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+      
+    - name: 🔨 Build Project
+      run: |
+        cd landing-page
+        npm install
+        npm run build
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.MIMI_HOST_SERVER }}
+        username: ${{ secrets.MIMI_HOST_USER }}
+        password: ${{ secrets.MIMI_HOST_PWD }}
+        protocol: ${{ secrets.MIMI_HOST_PROTOCOL }}
+        local-dir: ./landing-page/dist/
