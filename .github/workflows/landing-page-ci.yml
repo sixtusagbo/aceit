@@ -1,4 +1,4 @@
-name: 🚀 Deploy website on push
+name: 🚀 Deploy landing page
 
 on: 
   push:
@@ -22,6 +22,7 @@ jobs:
       
     - name: 🔨 Build Project
       run: |
+        cd landing-page
         npm install
         npm run build
     
