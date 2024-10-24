@@ -4,12 +4,14 @@ Past-questions based exam preparation app.
 
 Visit the [website](https://aceitpro.com/).
 
-![Screenshot](shots/100-banner.webp)
+![Screenshot](shots/100-banner.png)
 
 ## Table of contents
 
 - [Inspiration](#inspiration)
 - [Getting Started](#getting-started)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
 - [Technologies](#technologies)
 - [Future](#future)
 - [Contributing](#contributing)
@@ -28,7 +30,7 @@ Realizing this need, I saw an opportunity to create a solution. When the time ca
 
 Follow these instructions to set up and run the **Ace iT** app on your local machine for development and testing purposes.
 
-- ### Prerequisites
+- ### Requirements
 
   Ensure you have the following installed:
 
