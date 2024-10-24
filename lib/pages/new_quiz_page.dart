@@ -26,6 +26,35 @@ class NewQuizPage extends HookConsumerWidget {
   static String get routeName => 'new-quiz';
   static String get routeLocation => '/quiz/new';
 
+  void resetDependentSelections(
+    WidgetRef ref, {
+    bool resetFaculty = false,
+    bool resetDepartment = false,
+    bool resetLevel = false,
+    bool resetSemester = false,
+    bool resetCourse = false,
+  }) {
+    if (resetFaculty) {
+      ref.read(selectedFacultyProvider.notifier).state = null;
+      resetDepartment = true;
+    }
+    if (resetDepartment) {
+      ref.read(selectedDepartmentProvider.notifier).state = null;
+      resetLevel = true;
+    }
+    if (resetLevel) {
+      ref.read(selectedLevelProvider.notifier).state = null;
+      resetSemester = true;
+    }
+    if (resetSemester) {
+      ref.read(selectedSemesterProvider.notifier).state = null;
+      resetCourse = true;
+    }
+    if (resetCourse) {
+      ref.read(selectedCourseProvider.notifier).state = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(GlobalKey<FormState>.new);
@@ -67,8 +96,10 @@ class NewQuizPage extends HookConsumerWidget {
                               overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
-                onChanged: (newValue) =>
-                    ref.read(selectedSchoolProvider.notifier).state = newValue,
+                onChanged: (newValue) {
+                  ref.read(selectedSchoolProvider.notifier).state = newValue;
+                  resetDependentSelections(ref, resetFaculty: true);
+                },
                 validator: (value) =>
                     value == null ? 'Please select a school' : null,
               ),
@@ -87,8 +118,10 @@ class NewQuizPage extends HookConsumerWidget {
                               overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
-                onChanged: (newValue) =>
-                    ref.read(selectedFacultyProvider.notifier).state = newValue,
+                onChanged: (newValue) {
+                  ref.read(selectedFacultyProvider.notifier).state = newValue;
+                  resetDependentSelections(ref, resetDepartment: true);
+                },
                 validator: (value) =>
                     value == null ? 'Please select a faculty' : null,
               ),
@@ -111,9 +144,11 @@ class NewQuizPage extends HookConsumerWidget {
                               overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
-                onChanged: (newValue) => ref
-                    .read(selectedDepartmentProvider.notifier)
-                    .state = newValue,
+                onChanged: (newValue) {
+                  ref.read(selectedDepartmentProvider.notifier).state =
+                      newValue;
+                  resetDependentSelections(ref, resetLevel: true);
+                },
                 validator: (value) =>
                     value == null ? 'Please select a department' : null,
               ),
@@ -132,8 +167,10 @@ class NewQuizPage extends HookConsumerWidget {
                               Text(level.name, overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
-                onChanged: (newValue) =>
-                    ref.read(selectedLevelProvider.notifier).state = newValue,
+                onChanged: (newValue) {
+                  ref.read(selectedLevelProvider.notifier).state = newValue;
+                  resetDependentSelections(ref, resetSemester: true);
+                },
                 validator: (value) =>
                     value == null ? 'Please select a level' : null,
               ),
@@ -155,8 +192,7 @@ class NewQuizPage extends HookConsumerWidget {
                     .toList(),
                 onChanged: (newValue) {
                   ref.read(selectedSemesterProvider.notifier).state = newValue;
-                  // Reset course when semester changes
-                  ref.read(selectedCourseProvider.notifier).state = null;
+                  resetDependentSelections(ref, resetCourse: true);
                 },
               ),
               loading: () => const FormInputSkeleton(),
@@ -164,36 +200,26 @@ class NewQuizPage extends HookConsumerWidget {
             ),
             const SizedBox(height: 16.0),
             coursesAsync.when(
-              data: (courses) {
-                final isCurrentCourseValid =
-                    courses.any((course) => course.id == selectedCourse);
-                if (!isCurrentCourseValid) {
-                  // If not valid, reset the selected course
-                  ref.read(selectedCourseProvider.notifier).state = null;
-                }
-
-                return DropdownButtonFormField<String>(
-                  value: isCurrentCourseValid ? selectedCourse : null,
-                  decoration: const InputDecoration(labelText: 'Select Course'),
-                  items: courses
-                      .map((Course course) => DropdownMenuItem<String>(
-                            value: course.id,
-                            child: SizedBox(
-                              width: 0.8.sw,
-                              child: Text(
-                                '${course.code} - ${course.title}',
-                                overflow: TextOverflow.ellipsis,
-                              ),
+              data: (courses) => DropdownButtonFormField<String>(
+                value: selectedCourse,
+                decoration: const InputDecoration(labelText: 'Select Course'),
+                items: courses
+                    .map((Course course) => DropdownMenuItem<String>(
+                          value: course.id,
+                          child: SizedBox(
+                            width: 0.8.sw,
+                            child: Text(
+                              '${course.code} - ${course.title}',
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ))
-                      .toList(),
-                  onChanged: (newValue) => ref
-                      .read(selectedCourseProvider.notifier)
-                      .state = newValue,
-                  validator: (value) =>
-                      value == null ? 'Please select a course' : null,
-                );
-              },
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (newValue) =>
+                    ref.read(selectedCourseProvider.notifier).state = newValue,
+                validator: (value) =>
+                    value == null ? 'Please select a course' : null,
+              ),
               loading: () => const FormInputSkeleton(),
               error: (_, __) => const Text('Error loading courses'),
             ),
