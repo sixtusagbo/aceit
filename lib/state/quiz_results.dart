@@ -6,11 +6,15 @@ import 'package:aceit/utils/extensions.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final quizResultsStreamProvider = StreamProvider<List<QuizResult>>((ref) {
+  final userId = ref.watch(userIdProvider);
   final firestore = ref.watch(firestoreProvider);
-  return firestore.collection('results').snapshots().map((snapshot) => snapshot
-      .docs
-      .map((doc) => QuizResult.fromMap({'id': doc.id, ...doc.data()}))
-      .toList());
+  return firestore
+      .collection('results')
+      .where('user_id', isEqualTo: userId)
+      .snapshots()
+      .map((snapshot) => snapshot.docs
+          .map((doc) => QuizResult.fromMap({'id': doc.id, ...doc.data()}))
+          .toList());
 });
 
 final quizResultProvider = Provider.family<QuizResult?, String>((ref, quizId) {
@@ -69,9 +73,9 @@ final saveQuizResultProvider =
   (ref, result) async {
     final firestore = ref.watch(firestoreProvider);
     final data = result.toMap();
-    data.remove('id');
 
     if (result.id.isEmpty) {
+      data.remove('id');
       await firestore.collection('results').add(data);
     } else {
       await firestore.collection('results').doc(result.id).update(data);
