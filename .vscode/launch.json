@@ -5,17 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter",
-      "type": "dart",
-      "request": "launch",
-      "program": "lib/main.dart",
-      "args": [
-        "--dart-define-from-file",
-        "lib/development.env"
-      ]
-    },
-    {
-      "name": "aceit",
+      "name": "Ace iT",
       "request": "launch",
       "type": "dart",
       "args": [
