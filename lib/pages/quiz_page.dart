@@ -423,9 +423,7 @@ class _QuizContent extends HookConsumerWidget {
             IconButton(
               icon: const Icon(Icons.bookmark_outline),
               onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Saving progress...')),
-                );
+                showToast('Saving progress...');
                 await saveProgress();
                 if (context.mounted) context.pop();
               },
