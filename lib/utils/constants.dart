@@ -1,6 +1,7 @@
 import 'package:aceit/models/course.dart';
 import 'package:aceit/models/quiz_result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 const kPrimaryColor = Color(0xFF458EFF);
 const kGlassWhite = Color(0xCCFFFFFF); // Increased opacity
@@ -52,3 +53,12 @@ final kDummyQuizResults = [
       ),
     ),
 ];
+
+final kInputDecoration = InputDecoration(
+  labelText: 'Select School',
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12.r),
+  ),
+  filled: true,
+  fillColor: Colors.white.withOpacity(0.5),
+);
