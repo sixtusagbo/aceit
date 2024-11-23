@@ -2,6 +2,7 @@ import 'package:aceit/models/course.dart';
 import 'package:aceit/models/quiz_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 const kPrimaryColor = Color(0xFF458EFF);
 const kGlassWhite = Color(0xCCFFFFFF); // Increased opacity
@@ -68,3 +69,22 @@ final titleStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: kPrimaryColor,
 );
+
+/// Show a toast message.
+Future<bool?> showToast(
+  String message, {
+  bool isLong = false,
+  Color? backgroundColor,
+  double? fontSize,
+  Color? textColor,
+  ToastGravity? gravity,
+}) {
+  return Fluttertoast.showToast(
+    msg: message,
+    backgroundColor: backgroundColor ?? Colors.black54,
+    toastLength: isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
+    fontSize: fontSize,
+    textColor: textColor,
+    gravity: gravity,
+  );
+}

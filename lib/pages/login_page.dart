@@ -1,5 +1,7 @@
+import 'package:aceit/utils/constants.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
@@ -35,10 +37,12 @@ class LoginPage extends StatelessWidget {
             }
             if (!user.emailVerified) {
               user.sendEmailVerification();
-              const snackBar = SnackBar(
-                  content: Text(
-                      'Please check your email to verify your email address'));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+              showToast(
+                'Please check your email to verify your email address',
+                isLong: true,
+                gravity: ToastGravity.CENTER,
+              );
             }
             context.pushReplacement('/');
           })),

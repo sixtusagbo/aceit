@@ -314,11 +314,8 @@ class NewQuizPage extends HookConsumerWidget {
                                       .future);
                               if (quizId == null) {
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'No quiz found for selected course')),
-                                  );
+                                  showToast(
+                                      'No quiz found for selected course');
                                 }
                                 return;
                               }
@@ -328,10 +325,7 @@ class NewQuizPage extends HookConsumerWidget {
                                 context.push('/quiz/$quizId');
                               }
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Please fill in all fields')),
-                              );
+                              showToast('Please fill in all fields');
                             }
                           },
                           style: ElevatedButton.styleFrom(
