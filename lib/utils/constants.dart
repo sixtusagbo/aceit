@@ -62,3 +62,9 @@ final kInputDecoration = InputDecoration(
   filled: true,
   fillColor: Colors.white.withOpacity(0.5),
 );
+
+final titleStyle = TextStyle(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.bold,
+  color: kPrimaryColor,
+);
