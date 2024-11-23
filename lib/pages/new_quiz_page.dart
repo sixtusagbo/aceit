@@ -87,11 +87,7 @@ class NewQuizPage extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(
           'New Quiz',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: kPrimaryColor,
-          ),
-          textAlign: TextAlign.center,
+          style: titleStyle,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,

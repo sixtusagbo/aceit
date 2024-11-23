@@ -68,7 +68,6 @@ class _QuizContent extends HookConsumerWidget {
     final currentResultId = useState<String?>(resultId);
     final userId = ref.watch(userIdProvider);
     final quizResultAsync = ref.watch(quizResultProvider(quizId));
-    var titleStyle = TextStyle(fontSize: 18.sp);
     // Track initialization
     final hasInitialized = useState(false);
 
