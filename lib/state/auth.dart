@@ -10,3 +10,7 @@ final authStateProvider = StreamProvider<User?>((ref) {
 final userIdProvider = Provider<String?>((ref) {
   return ref.watch(authStateProvider).value?.uid;
 });
+
+final displayNameProvider = StreamProvider<String?>((ref) {
+  return ref.watch(authProvider).userChanges().map((user) => user?.displayName);
+});

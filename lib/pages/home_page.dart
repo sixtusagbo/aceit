@@ -18,9 +18,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final name = ref.watch(authStateProvider.select(
-      (value) => value.valueOrNull?.displayName,
-    ));
+    final name = ref.watch(displayNameProvider);
     final inProgressQuizzes = ref.watch(inProgressQuizProvider);
 
     return Scaffold(
@@ -38,7 +36,11 @@ class HomePage extends ConsumerWidget {
             SizedBox(
               width: 140.w,
               child: Text(
-                "Hi, $name",
+                switch (name) {
+                  AsyncData(:final value) =>
+                    value == null ? 'Welcome' : 'Hi, $value',
+                  _ => 'Welcome',
+                },
                 overflow: TextOverflow.ellipsis,
               ),
             ),
