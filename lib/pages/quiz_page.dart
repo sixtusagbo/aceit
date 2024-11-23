@@ -12,6 +12,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class QuizPage extends HookConsumerWidget {
   const QuizPage({
@@ -111,7 +112,6 @@ class _QuizContent extends HookConsumerWidget {
       if (!hasInitialized.value &&
           resultId == null &&
           quizResultAsync != null) {
-        hasInitialized.value = true;
         Future.microtask(() async {
           if (context.mounted) {
             final continueExisting = await showDialog<bool>(
@@ -169,6 +169,7 @@ class _QuizContent extends HookConsumerWidget {
                   List<int?>.from(savedResult.selectedAnswers);
               secondsElapsed.value = savedResult.secondsElapsed;
             }
+            hasInitialized.value = true;
           }
         });
       }
@@ -318,6 +319,16 @@ class _QuizContent extends HookConsumerWidget {
           ),
           centerTitle: true,
           actions: [
+            Text(
+              isQuizFinished.value || hasInitialized.value == false
+                  ? '00:00'
+                  : '${secondsElapsed.value ~/ 60}:${(secondsElapsed.value % 60).toString().padLeft(2, '0')}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontSize: 18.sp),
+              textAlign: TextAlign.center,
+            ),
             IconButton(
               icon: const Icon(Icons.bookmark_outline),
               onPressed: () async {
@@ -335,21 +346,21 @@ class _QuizContent extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              LinearProgressIndicator(
-                value: (currentQuestionIndex.value + 1) / questions.length,
-                valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                backgroundColor: Colors.grey[300],
-              ),
-              16.verticalSpace,
-              Text(
-                isQuizFinished.value
-                    ? 'Time: 00:00'
-                    : 'Time: ${secondsElapsed.value ~/ 60}:${(secondsElapsed.value % 60).toString().padLeft(2, '0')}',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontSize: 18.sp),
-                textAlign: TextAlign.center,
+              LinearPercentIndicator(
+                width: MediaQuery.of(context).size.width - 50,
+                animation: true,
+                lineHeight: 20.h,
+                animationDuration: 500,
+                animateFromLastPercent: true,
+                percent: (currentQuestionIndex.value + 1) / questions.length,
+                center: Text(
+                  'Question ${currentQuestionIndex.value + 1} / ${questions.length}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                progressColor: kPrimaryColor,
+                barRadius: Radius.circular(40.r),
               ),
               20.verticalSpace,
               Text(
