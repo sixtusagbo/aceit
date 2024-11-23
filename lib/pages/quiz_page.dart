@@ -241,34 +241,122 @@ class _QuizContent extends HookConsumerWidget {
       if (context.mounted) {
         await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Quiz Results', style: TextStyle(fontSize: 18.sp)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Score: $score/${questions.length}',
-                    style: TextStyle(fontSize: 16.sp)),
-                Text(
-                    'Time taken: ${secondsElapsed.value ~/ 60}m ${secondsElapsed.value % 60}s',
-                    style: TextStyle(fontSize: 16.sp)),
+          barrierColor: Colors.black.withOpacity(0.3),
+          builder: (context) => BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: AlertDialog(
+              backgroundColor: kGlassBackground.withOpacity(0.7),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+                side: BorderSide(color: kGlassBorder, width: 2),
+              ),
+              title: Container(
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: kGlassBorder)),
+                ),
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: Text(
+                  'Quiz Results',
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: kPrimaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(0.2),
+                      Colors.white.withOpacity(0.1),
+                    ],
+                  ),
+                ),
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: kPrimaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15.r),
+                        border:
+                            Border.all(color: kPrimaryColor.withOpacity(0.3)),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            '${(score / questions.length * 100).round()}%',
+                            style: TextStyle(
+                              fontSize: 36.sp,
+                              fontWeight: FontWeight.bold,
+                              color: kPrimaryColor,
+                            ),
+                          ),
+                          Text(
+                            '$score out of ${questions.length}',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    16.verticalSpace,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.timer_outlined, color: Colors.grey[600]),
+                        8.horizontalSpace,
+                        Text(
+                          '${secondsElapsed.value ~/ 60}m ${secondsElapsed.value % 60}s',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.pop();
+                    context.push('/result-analysis', extra: {
+                      'questions': questions,
+                      'shuffledOptions': shuffledOptions,
+                      'selectedAnswers': selectedAnswers.value,
+                      'score': score,
+                    });
+                    canPop.value = true;
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                      color: kPrimaryColor,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Text(
+                      'View Analysis',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop(); // Close dialog
-                  context.push('/result-analysis', extra: {
-                    'questions': questions,
-                    'shuffledOptions': shuffledOptions,
-                    'selectedAnswers': selectedAnswers.value,
-                    'score': score,
-                  });
-                  canPop.value = true;
-                },
-                child: Text('View Results', style: TextStyle(fontSize: 14.sp)),
-              ),
-            ],
           ),
         );
       }
