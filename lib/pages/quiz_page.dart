@@ -173,6 +173,9 @@ class _QuizContent extends HookConsumerWidget {
           }
           hasInitialized.value = true;
         });
+      } else if (!hasInitialized.value && resultId == null) {
+        // Initialize immediately if there's no existing quiz to restore
+        hasInitialized.value = true;
       }
       return null;
     }, [quizResultAsync]);
