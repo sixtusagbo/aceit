@@ -25,26 +25,27 @@ class ContinueProgressWidget extends StatelessWidget {
           ),
         ),
         16.verticalSpace,
-        Container(
-          width: double.infinity,
-          decoration: ShapeDecoration(
-            color: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.r),
-            ),
-          ),
-          child: Column(
-            children: [
-              for (final result in results)
-                CourseProgressWidget(
+        Column(
+          children: [
+            for (final result in results)
+              Container(
+                width: double.infinity,
+                decoration: ShapeDecoration(
+                  color: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.r),
+                  ),
+                ),
+                child: CourseProgressWidget(
                   courseCode: result.course!.code,
                   courseTitle: result.course!.title,
                   progress: result.progress,
                   quizId: result.quizId,
                   resultId: result.id,
-                )
-            ].separatedBy(const Divider()),
-          ),
+                  date: result.date,
+                ),
+              )
+          ].separatedBy(16.verticalSpace),
         ),
       ],
     );

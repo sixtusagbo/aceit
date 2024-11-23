@@ -22,7 +22,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: CurvedNavigationBar(
         color: Theme.of(context).primaryColor,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blueAccent.withOpacity(0.1),
         buttonBackgroundColor: Theme.of(context).primaryColor,
         items: const <Widget>[
           Icon(
