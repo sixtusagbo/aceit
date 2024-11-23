@@ -63,6 +63,7 @@ class _QuizContent extends HookConsumerWidget {
     final selectedAnswers = useState(List<int?>.filled(questions.length, null));
     final canPop = useState(false);
     final courseDetailsAsync = ref.watch(courseDetailsByQuizIdProvider(quizId));
+    final currentResultId = useState<String?>(resultId);
     final userId = ref.watch(userIdProvider);
     final quizResultAsync = ref.watch(quizResultProvider(quizId));
 
@@ -84,11 +85,12 @@ class _QuizContent extends HookConsumerWidget {
       return subscription.cancel;
     }, []);
 
-    // Restore progress if any
+    // Restore progress for existing quiz
     useEffect(() {
       if (resultId != null) {
         final result = ref.read(currentQuizProgressProvider(resultId!));
         if (result != null) {
+          currentResultId.value = result.id; // Add this line
           currentQuestionIndex.value = result.currentQuestion;
           selectedAnswers.value = List<int?>.from(result.selectedAnswers);
           secondsElapsed.value = result.secondsElapsed;
@@ -99,6 +101,78 @@ class _QuizContent extends HookConsumerWidget {
       }
       return null;
     }, []);
+
+    // Add new state variable to track initialization
+    final hasInitialized = useState(false);
+
+    // Replace the existing quiz restoration effect with this new one
+    useEffect(() {
+      if (!hasInitialized.value &&
+          resultId == null &&
+          quizResultAsync != null) {
+        hasInitialized.value = true;
+        Future.microtask(() async {
+          if (context.mounted) {
+            final continueExisting = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Continue Existing Quiz?'),
+                content: const Text(
+                    'Would you like to continue your previous attempt or start a new quiz?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => context.pop(false),
+                    child: const Text('Start New'),
+                  ),
+                  TextButton(
+                    onPressed: () => context.pop(true),
+                    child: const Text('Continue'),
+                  ),
+                ],
+              ),
+            );
+
+            if (continueExisting == true) {
+              currentResultId.value = quizResultAsync.id;
+              currentQuestionIndex.value = quizResultAsync.currentQuestion;
+              selectedAnswers.value =
+                  List<int?>.from(quizResultAsync.selectedAnswers);
+              secondsElapsed.value = quizResultAsync.secondsElapsed;
+              if (!quizResultAsync.inProgress) {
+                isQuizFinished.value = true;
+              }
+            } else {
+              // Create new quiz result for fresh start
+              final newQuizResult = QuizResult(
+                id: '',
+                userId: userId!,
+                quizId: quizId,
+                score: null,
+                selectedAnswers: List<int?>.filled(questions.length, null),
+                total: questions.length,
+                inProgress: true,
+                date: DateTime.now(),
+                currentQuestion: 0,
+                progress: 0,
+                secondsElapsed: 0,
+                course: null,
+              );
+              // Save the new quiz result and use it
+              final savedResult =
+                  await ref.read(saveQuizResultProvider(newQuizResult).future);
+              currentResultId.value = savedResult.id; // Store the new result ID
+
+              // Update the state with the new quiz result
+              currentQuestionIndex.value = savedResult.currentQuestion;
+              selectedAnswers.value =
+                  List<int?>.from(savedResult.selectedAnswers);
+              secondsElapsed.value = savedResult.secondsElapsed;
+            }
+          }
+        });
+      }
+      return null;
+    }, [quizResultAsync]);
 
     void nextQuestion() {
       if (currentQuestionIndex.value < questions.length - 1) {
@@ -114,7 +188,7 @@ class _QuizContent extends HookConsumerWidget {
 
     Future<void> saveProgress() async {
       final quizResult = QuizResult(
-        id: quizResultAsync?.id ?? '',
+        id: currentResultId.value ?? '', // Use the tracked result ID
         userId: userId!,
         quizId: quizId,
         score: null,
@@ -142,7 +216,7 @@ class _QuizContent extends HookConsumerWidget {
       }).length;
 
       final quizResult = QuizResult(
-        id: quizResultAsync?.id ?? '',
+        id: currentResultId.value ?? '', // Use the tracked result ID
         userId: userId!,
         quizId: quizId,
         score: score,

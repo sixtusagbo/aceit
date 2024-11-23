@@ -68,17 +68,31 @@ final currentQuizProgressProvider =
       .value;
 });
 
+/// Provider to load a quiz result by its ID
+final quizResultByIdProvider = FutureProvider.family<QuizResult?, String>(
+  (ref, resultId) async {
+    if (resultId.isEmpty) return null;
+    final firestore = ref.watch(firestoreProvider);
+    final doc = await firestore.collection('results').doc(resultId).get();
+    if (!doc.exists) return null;
+    return QuizResult.fromMap({'id': doc.id, ...doc.data()!});
+  },
+);
+
 final saveQuizResultProvider =
-    FutureProvider.autoDispose.family<void, QuizResult>(
+    FutureProvider.autoDispose.family<QuizResult, QuizResult>(
   (ref, result) async {
     final firestore = ref.watch(firestoreProvider);
     final data = result.toMap();
 
     if (result.id.isEmpty) {
       data.remove('id');
-      await firestore.collection('results').add(data);
+      final docRef = await firestore.collection('results').add(data);
+      return QuizResult.fromMap({'id': docRef.id, ...data});
     } else {
+      data.remove('date'); // don't update the date
       await firestore.collection('results').doc(result.id).update(data);
+      return result;
     }
   },
 );
