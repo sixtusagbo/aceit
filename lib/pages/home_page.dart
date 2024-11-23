@@ -47,6 +47,7 @@ class HomePage extends ConsumerWidget {
           ],
         ),
         titleSpacing: 27.w,
+        backgroundColor: Colors.blue.withOpacity(0.1),
         actions: [
           // Support icon button
           IconButton(
@@ -57,44 +58,73 @@ class HomePage extends ConsumerWidget {
           18.horizontalSpace,
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 23.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Carousel of banner images
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 200.h),
-              child: AutoScrollingCarousel(
-                autoScrollDuration: const Duration(seconds: 3),
-                transitionDuration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                children: [
-                  for (final image in kBannerImages)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(18.r),
-                      child: Image.asset(
-                        image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                ], // Customize as needed
-              ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        height: 1.sh,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 23.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Study Materials',
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                12.verticalSpace,
+                // Carousel section
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 200.h),
+                  child: AutoScrollingCarousel(
+                    autoScrollDuration: const Duration(seconds: 3),
+                    transitionDuration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    children: [
+                      for (final image in kBannerImages)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(18.r),
+                          child: Image.asset(
+                            image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                    ], // Customize as needed
+                  ),
+                ),
+                24.verticalSpace,
+                inProgressQuizzes.when(
+                  data: (results) => results.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No quizzes in progress',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        )
+                      : ContinueProgressWidget(results: results),
+                  error: (err, _) => Text('Error: $err'),
+                  loading: () => Skeletonizer(
+                    child: ContinueProgressWidget(results: kDummyQuizResults),
+                  ),
+                ),
+                16.verticalSpace,
+              ],
             ),
-            20.verticalSpace,
-
-            /// Continue in-progress quiz
-            inProgressQuizzes.when(
-              data: (results) => results.isEmpty
-                  ? const Text('No quizzes in progress')
-                  : ContinueProgressWidget(results: results),
-              error: (err, _) => Text('Error: $err'),
-              loading: () => Skeletonizer(
-                child: ContinueProgressWidget(results: kDummyQuizResults),
-              ),
-            ),
-            16.verticalSpace,
-          ],
+          ),
         ),
       ),
     );

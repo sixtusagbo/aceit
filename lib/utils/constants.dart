@@ -1,8 +1,12 @@
 import 'package:aceit/models/course.dart';
 import 'package:aceit/models/quiz_result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 const kPrimaryColor = Color(0xFF458EFF);
+const kGlassWhite = Color(0xCCFFFFFF); // Increased opacity
+const kGlassBorder = Color(0x99FFFFFF); // More visible border
+const kGlassBackground = Color(0x55FFFFFF); // New background color for depth
 
 Map<int, Color> colorSwatch = {
   50: const Color(0xFFE3F2FF),
@@ -49,3 +53,18 @@ final kDummyQuizResults = [
       ),
     ),
 ];
+
+final kInputDecoration = InputDecoration(
+  labelText: 'Select School',
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12.r),
+  ),
+  filled: true,
+  fillColor: Colors.white.withOpacity(0.5),
+);
+
+final titleStyle = TextStyle(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.bold,
+  color: kPrimaryColor,
+);

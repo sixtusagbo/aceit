@@ -1,4 +1,8 @@
+import 'dart:ui';
+
 import 'package:aceit/models/question.dart';
+import 'package:aceit/utils/constants.dart';
+import 'package:aceit/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -36,29 +40,131 @@ class ResultAnalysisPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Result Analysis', style: TextStyle(fontSize: 18.sp)),
+        title: Text(
+          'Result Analysis',
+          style: titleStyle,
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Final Score: $score/$totalQuestions',
-                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 12.h),
-              _buildStatisticRow('Correct', correctPercentage, Colors.green),
-              _buildStatisticRow('Incorrect', incorrectPercentage, Colors.red),
-              _buildStatisticRow('Skipped', skippedPercentage, Colors.orange),
-              SizedBox(height: 20.h),
-              ...List.generate(
-                totalQuestions,
-                (index) => _buildQuestionAnalysis(index),
-              ),
-            ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Colors.blue.shade50],
           ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildScoreCard(totalQuestions),
+                SizedBox(height: 20.h),
+                _buildStatisticsCard(
+                  correctPercentage,
+                  incorrectPercentage,
+                  skippedPercentage,
+                ),
+                SizedBox(height: 20.h),
+                ...List.generate(
+                  totalQuestions,
+                  (index) => _buildQuestionAnalysis(index),
+                ).separatedBy(16.verticalSpace),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassContainer({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            kGlassWhite,
+            kGlassBackground,
+          ],
+        ),
+        border: Border.all(
+          color: kGlassBorder,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.2),
+            offset: const Offset(-3, -3),
+            blurRadius: 5,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            offset: const Offset(3, 3),
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreCard(int totalQuestions) {
+    return _buildGlassContainer(
+      child: Padding(
+        padding: EdgeInsets.all(20.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$score',
+              style: TextStyle(
+                fontSize: 48.sp,
+                fontWeight: FontWeight.bold,
+                color: kPrimaryColor,
+              ),
+            ),
+            Text(
+              '/$totalQuestions',
+              style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatisticsCard(
+    String correctPercentage,
+    String incorrectPercentage,
+    String skippedPercentage,
+  ) {
+    return _buildGlassContainer(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          children: [
+            _buildStatisticRow('Correct', correctPercentage, Colors.green),
+            SizedBox(height: 12.h),
+            _buildStatisticRow('Incorrect', incorrectPercentage, Colors.red),
+            SizedBox(height: 12.h),
+            _buildStatisticRow('Skipped', skippedPercentage, Colors.orange),
+          ],
         ),
       ),
     );
@@ -103,8 +209,7 @@ class ResultAnalysisPage extends StatelessWidget {
         shuffledOptions[index][selectedAnswerIndex] ==
             question.options[question.answer];
 
-    return Card(
-      margin: EdgeInsets.only(bottom: 16.h),
+    return _buildGlassContainer(
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -114,69 +219,71 @@ class ResultAnalysisPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Question ${index + 1}:',
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                  'Question ${index + 1}',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: kPrimaryColor,
+                  ),
                 ),
                 if (isSkipped)
-                  Text(
-                    'Skipped',
-                    style: TextStyle(
-                        fontSize: 16.sp,
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Text(
+                      'Skipped',
+                      style: TextStyle(
+                        fontSize: 14.sp,
                         color: Colors.orange,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
               ],
             ),
-            SizedBox(height: 8.h),
-            Text(question.question, style: TextStyle(fontSize: 16.sp)),
             SizedBox(height: 12.h),
+            Text(
+              question.question,
+              style: TextStyle(fontSize: 16.sp),
+            ),
+            SizedBox(height: 16.h),
             ...shuffledOptions[index].asMap().entries.map((entry) {
               final isSelected = selectedAnswerIndex == entry.key;
               final isCorrectAnswer =
                   entry.value == question.options[question.answer];
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.h),
+
+              return Container(
+                margin: EdgeInsets.only(bottom: 8.h),
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color:
+                      _getOptionColor(isSelected, isCorrect, isCorrectAnswer),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
                 child: Row(
                   children: [
                     Icon(
-                      isSelected
-                          ? (isCorrect ? Icons.check_circle : Icons.cancel)
-                          : (isCorrectAnswer ? Icons.check_circle : null),
-                      color: isSelected
-                          ? (isCorrect ? Colors.green : Colors.red)
-                          : (isCorrectAnswer ? Colors.green : null),
+                      _getOptionIcon(isSelected, isCorrect, isCorrectAnswer),
+                      color: _getOptionIconColor(
+                          isSelected, isCorrect, isCorrectAnswer),
                     ),
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 12.w),
                     Expanded(
                       child: Text(
                         entry.value,
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: isSelected
-                              ? (isCorrect ? Colors.green : Colors.red)
-                              : (isCorrectAnswer ? Colors.green : null),
+                          color: _getOptionTextColor(
+                              isSelected, isCorrect, isCorrectAnswer),
                         ),
                       ),
                     ),
-                    if (isSelected)
-                      Text(
-                        isCorrect ? 'Correct' : 'Wrong',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: isCorrect ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    if (!isSelected && isCorrectAnswer)
-                      Text(
-                        'Correct',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                   ],
                 ),
               );
@@ -185,5 +292,50 @@ class ResultAnalysisPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getOptionColor(bool isSelected, bool isCorrect, bool isCorrectAnswer) {
+    if (isSelected) {
+      return isCorrect
+          ? Colors.green.withOpacity(0.1)
+          : Colors.red.withOpacity(0.1);
+    }
+    if (isCorrectAnswer) {
+      return Colors.green.withOpacity(0.1);
+    }
+    return Colors.white.withOpacity(0.5);
+  }
+
+  IconData _getOptionIcon(
+      bool isSelected, bool isCorrect, bool isCorrectAnswer) {
+    if (isSelected) {
+      return isCorrect ? Icons.check_circle : Icons.cancel;
+    }
+    if (isCorrectAnswer) {
+      return Icons.check_circle;
+    }
+    return Icons.radio_button_unchecked;
+  }
+
+  Color _getOptionIconColor(
+      bool isSelected, bool isCorrect, bool isCorrectAnswer) {
+    if (isSelected) {
+      return isCorrect ? Colors.green : Colors.red;
+    }
+    if (isCorrectAnswer) {
+      return Colors.green;
+    }
+    return Colors.grey;
+  }
+
+  Color _getOptionTextColor(
+      bool isSelected, bool isCorrect, bool isCorrectAnswer) {
+    if (isSelected) {
+      return isCorrect ? Colors.green : Colors.red;
+    }
+    if (isCorrectAnswer) {
+      return Colors.green;
+    }
+    return Colors.black87;
   }
 }
