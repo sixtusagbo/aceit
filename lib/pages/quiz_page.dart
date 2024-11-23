@@ -66,6 +66,7 @@ class _QuizContent extends HookConsumerWidget {
     final currentResultId = useState<String?>(resultId);
     final userId = ref.watch(userIdProvider);
     final quizResultAsync = ref.watch(quizResultProvider(quizId));
+    var titleStyle = TextStyle(fontSize: 18.sp);
 
     final shuffledOptions = useMemoized(() {
       return questions.map((q) {
@@ -309,11 +310,25 @@ class _QuizContent extends HookConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: courseDetailsAsync.when(
-            data: (course) => Text("Quiz on ${course.code}",
-                style: TextStyle(fontSize: 18.sp)),
-            loading: () => Text('Quiz', style: TextStyle(fontSize: 18.sp)),
-            error: (_, __) => Text('Quiz', style: TextStyle(fontSize: 18.sp)),
+            data: (course) {
+              return Text("Quiz on ${course.code}", style: titleStyle);
+            },
+            loading: () => Text('Quiz', style: titleStyle),
+            error: (_, __) => Text('Quiz', style: titleStyle),
           ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.bookmark_outline),
+              onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Saving progress...')),
+                );
+                await saveProgress();
+                if (context.mounted) context.pop();
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: EdgeInsets.all(16.w),
