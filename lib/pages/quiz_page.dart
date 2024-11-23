@@ -68,6 +68,8 @@ class _QuizContent extends HookConsumerWidget {
     final userId = ref.watch(userIdProvider);
     final quizResultAsync = ref.watch(quizResultProvider(quizId));
     var titleStyle = TextStyle(fontSize: 18.sp);
+    // Track initialization
+    final hasInitialized = useState(false);
 
     final shuffledOptions = useMemoized(() {
       return questions.map((q) {
@@ -92,7 +94,7 @@ class _QuizContent extends HookConsumerWidget {
       if (resultId != null) {
         final result = ref.read(currentQuizProgressProvider(resultId!));
         if (result != null) {
-          currentResultId.value = result.id; // Add this line
+          currentResultId.value = result.id;
           currentQuestionIndex.value = result.currentQuestion;
           selectedAnswers.value = List<int?>.from(result.selectedAnswers);
           secondsElapsed.value = result.secondsElapsed;
@@ -100,12 +102,10 @@ class _QuizContent extends HookConsumerWidget {
             isQuizFinished.value = true;
           }
         }
+        hasInitialized.value = true;
       }
       return null;
     }, []);
-
-    // Add new state variable to track initialization
-    final hasInitialized = useState(false);
 
     // Replace the existing quiz restoration effect with this new one
     useEffect(() {
@@ -119,7 +119,7 @@ class _QuizContent extends HookConsumerWidget {
               builder: (context) => AlertDialog(
                 title: const Text('Continue Existing Quiz?'),
                 content: const Text(
-                    'Would you like to continue your previous attempt or start a new quiz?'),
+                    'Would you like to continue your recent attempt or start a new quiz?'),
                 actions: [
                   TextButton(
                     onPressed: () => context.pop(false),
@@ -169,8 +169,8 @@ class _QuizContent extends HookConsumerWidget {
                   List<int?>.from(savedResult.selectedAnswers);
               secondsElapsed.value = savedResult.secondsElapsed;
             }
-            hasInitialized.value = true;
           }
+          hasInitialized.value = true;
         });
       }
       return null;
@@ -190,7 +190,7 @@ class _QuizContent extends HookConsumerWidget {
 
     Future<void> saveProgress() async {
       final quizResult = QuizResult(
-        id: currentResultId.value ?? '', // Use the tracked result ID
+        id: currentResultId.value ?? '',
         userId: userId!,
         quizId: quizId,
         score: null,
@@ -218,7 +218,7 @@ class _QuizContent extends HookConsumerWidget {
       }).length;
 
       final quizResult = QuizResult(
-        id: currentResultId.value ?? '', // Use the tracked result ID
+        id: currentResultId.value ?? '',
         userId: userId!,
         quizId: quizId,
         score: score,
