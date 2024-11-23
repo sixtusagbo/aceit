@@ -3,6 +3,9 @@ import 'package:aceit/models/quiz_result.dart';
 import 'package:flutter/material.dart';
 
 const kPrimaryColor = Color(0xFF458EFF);
+const kGlassWhite = Color(0xCCFFFFFF); // Increased opacity
+const kGlassBorder = Color(0x99FFFFFF); // More visible border
+const kGlassBackground = Color(0x55FFFFFF); // New background color for depth
 
 Map<int, Color> colorSwatch = {
   50: const Color(0xFFE3F2FF),

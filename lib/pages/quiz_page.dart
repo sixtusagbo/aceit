@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:aceit/models/question.dart';
 import 'package:aceit/models/quiz_result.dart';
@@ -323,10 +324,10 @@ class _QuizContent extends HookConsumerWidget {
               isQuizFinished.value || hasInitialized.value == false
                   ? '00:00'
                   : '${secondsElapsed.value ~/ 60}:${(secondsElapsed.value % 60).toString().padLeft(2, '0')}',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontSize: 18.sp),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: TextAlign.center,
             ),
             IconButton(
@@ -341,82 +342,211 @@ class _QuizContent extends HookConsumerWidget {
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              LinearPercentIndicator(
-                width: MediaQuery.of(context).size.width - 50,
-                animation: true,
-                lineHeight: 20.h,
-                animationDuration: 500,
-                animateFromLastPercent: true,
-                percent: (currentQuestionIndex.value + 1) / questions.length,
-                center: Text(
-                  'Question ${currentQuestionIndex.value + 1} / ${questions.length}',
+        body: Container(
+          color: Colors.blue.withOpacity(0.1),
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LinearPercentIndicator(
+                  width: MediaQuery.of(context).size.width - 50,
+                  animation: true,
+                  lineHeight: 8.h,
+                  animationDuration: 500,
+                  animateFromLastPercent: true,
+                  percent: (currentQuestionIndex.value + 1) / questions.length,
+                  center: null,
+                  progressColor: kPrimaryColor,
+                  backgroundColor: Colors.grey[200],
+                  barRadius: Radius.circular(4.r),
+                ),
+                Text(
+                  'Question ${currentQuestionIndex.value + 1} of ${questions.length}',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                20.verticalSpace,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          kGlassWhite,
+                          kGlassBackground,
+                        ],
+                      ),
+                      border: Border.all(
+                        color: kGlassBorder,
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.2),
+                          offset: Offset(-3, -3),
+                          blurRadius: 5,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(3, 3),
+                          blurRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.r),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white.withOpacity(0.2),
+                                Colors.white.withOpacity(0.1),
+                              ],
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(20.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  questions[currentQuestionIndex.value]
+                                      .question,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                20.verticalSpace,
+                                Expanded(
+                                  child: ListView.separated(
+                                    itemCount: shuffledOptions[
+                                            currentQuestionIndex.value]
+                                        .length,
+                                    separatorBuilder: (_, __) =>
+                                        8.verticalSpace,
+                                    itemBuilder: (context, index) {
+                                      final option = shuffledOptions[
+                                          currentQuestionIndex.value][index];
+                                      final isSelected = selectedAnswers.value[
+                                              currentQuestionIndex.value] ==
+                                          index;
+
+                                      return Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () {
+                                            final newAnswers = List<int?>.from(
+                                                selectedAnswers.value);
+                                            newAnswers[currentQuestionIndex
+                                                .value] = index;
+                                            selectedAnswers.value = newAnswers;
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(12.r),
+                                          child: Container(
+                                            padding: EdgeInsets.all(16.w),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.r),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? kPrimaryColor
+                                                    : Colors.grey[300]!,
+                                                width: 2,
+                                              ),
+                                              color: isSelected
+                                                  ? kPrimaryColor
+                                                      .withOpacity(0.1)
+                                                  : Colors.transparent,
+                                            ),
+                                            child: Text(
+                                              option,
+                                              style: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: isSelected
+                                                    ? kPrimaryColor
+                                                    : Colors.black87,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                progressColor: kPrimaryColor,
-                barRadius: Radius.circular(40.r),
-              ),
-              20.verticalSpace,
-              Text(
-                questions[currentQuestionIndex.value].question,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontSize: 20.sp),
-              ),
-              SizedBox(height: 20.h),
-              ...shuffledOptions[currentQuestionIndex.value]
-                  .asMap()
-                  .entries
-                  .map((entry) => RadioListTile(
-                        title: Text(entry.value,
-                            style: TextStyle(fontSize: 16.sp)),
-                        value: entry.key,
-                        groupValue:
-                            selectedAnswers.value[currentQuestionIndex.value],
-                        onChanged: (value) {
-                          final newAnswers =
-                              List<int?>.from(selectedAnswers.value);
-                          newAnswers[currentQuestionIndex.value] = value;
-                          selectedAnswers.value = newAnswers;
-                        },
-                      )),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: currentQuestionIndex.value > 0
-                        ? previousQuestion
-                        : null,
-                    child: Text('Previous', style: TextStyle(fontSize: 14.sp)),
-                  ),
-                  ElevatedButton(
-                    onPressed: currentQuestionIndex.value < questions.length - 1
-                        ? nextQuestion
-                        : null,
-                    child: Text('Next', style: TextStyle(fontSize: 14.sp)),
-                  ),
-                ],
-              ),
-              SizedBox(height: 40.h),
-              ElevatedButton(
-                onPressed: submitQuiz,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
+                20.verticalSpace,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: currentQuestionIndex.value > 0
+                          ? previousQuestion
+                          : null,
+                      icon: Icon(Icons.arrow_back, size: 18.sp),
+                      label:
+                          Text('Previous', style: TextStyle(fontSize: 14.sp)),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 12.h),
+                        backgroundColor: Colors.grey[200],
+                        foregroundColor: Colors.black87,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed:
+                          currentQuestionIndex.value < questions.length - 1
+                              ? nextQuestion
+                              : null,
+                      label: Text('Next', style: TextStyle(fontSize: 14.sp)),
+                      icon: Icon(Icons.arrow_forward, size: 18.sp),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 12.h),
+                        backgroundColor: kPrimaryColor,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'Submit Quiz',
-                  style: TextStyle(fontSize: 16.sp, color: Colors.white),
+                16.verticalSpace,
+                ElevatedButton.icon(
+                  onPressed: submitQuiz,
+                  icon: Icon(Icons.check_circle, size: 20.sp),
+                  label: Text('Submit Quiz', style: TextStyle(fontSize: 16.sp)),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    backgroundColor: kPrimaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
