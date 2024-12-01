@@ -241,6 +241,7 @@ class _QuizContent extends HookConsumerWidget {
         await showDialog<bool>(
           context: context,
           barrierColor: Colors.black.withOpacity(0.3),
+          barrierDismissible: false,
           builder: (context) => BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: AlertDialog(
