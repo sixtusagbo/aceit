@@ -1,10 +1,12 @@
 import 'dart:ui';
 
 import 'package:aceit/models/question.dart';
+import 'package:aceit/pages/home_page.dart';
 import 'package:aceit/utils/constants.dart';
 import 'package:aceit/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class ResultAnalysisPage extends StatelessWidget {
   const ResultAnalysisPage({
@@ -46,6 +48,11 @@ class ResultAnalysisPage extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () => context.go(HomePage.routeLocation),
+          icon: Icon(Icons.home),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
