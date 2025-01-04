@@ -1,6 +1,6 @@
 # Ace iT
 
-Past-questions based exam preparation app.
+Past-questions based exam preparation app. Still a Work in Progress.
 
 Visit the [website](https://aceitpro.com/).
 
