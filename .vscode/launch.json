@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Ace iT",
+      "name": "Ace It (development mode)",
       "request": "launch",
       "type": "dart",
       "args": [

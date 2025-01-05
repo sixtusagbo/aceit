@@ -1,3 +1,4 @@
+import 'package:aceit/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatelessWidget {
@@ -8,7 +9,11 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: Text("Splash Page")),
+      body: Center(
+          child: Text(
+        "Splash Page",
+        style: TextStyle(fontSize: 24, color: kPrimaryColor),
+      )),
     );
   }
 }

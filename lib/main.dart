@@ -21,11 +21,11 @@ Future<void> main() async {
     EmailAuthProvider(),
   ]);
 
-  runApp(const ProviderScope(child: AceitApp()));
+  runApp(const ProviderScope(child: AceItApp()));
 }
 
-class AceitApp extends ConsumerWidget {
-  const AceitApp({super.key});
+class AceItApp extends ConsumerWidget {
+  const AceItApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +39,7 @@ class AceitApp extends ConsumerWidget {
             routeInformationParser: router.routeInformationParser,
             routerDelegate: router.routerDelegate,
             routeInformationProvider: router.routeInformationProvider,
-            title: 'Ace iT',
+            title: 'Ace It',
             theme: ThemeData.light().copyWith(
               buttonTheme: Theme.of(context).buttonTheme.copyWith(
                     highlightColor: kPrimaryColor,

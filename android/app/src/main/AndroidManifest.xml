@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="Ace iT"
+        android:label="Ace It"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

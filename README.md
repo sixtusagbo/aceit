@@ -1,4 +1,4 @@
-# Ace iT
+# Ace It
 
 Past-questions based exam preparation app. Still a Work in Progress.
 
