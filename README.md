@@ -4,7 +4,7 @@ Past-questions based exam preparation app. Still a Work in Progress.
 
 Visit the [website](https://aceitpro.com/).
 
-![Screenshot](shots/100-banner.png)
+![Screenshot](shots/101-banner.png)
 
 ## Table of contents
 
