@@ -56,24 +56,36 @@ export function LandingPage() {
                 </p>
               </div>
               <div className="space-x-4">
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.sa.aceit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center h-10 px-4 bg-[#458EFF] text-white rounded-md hover:bg-[#3570CC] transition-colors">
+                  <img
+                    src="/images/android-icon.png"
+                    className="h-5 w-5 mr-2"
+                    alt="Android"
+                  />
+                  <span>Pre-register</span>
+                </a>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button className="bg-[#458EFF] text-white">
-                      Download
+                    <Button className="bg-[#458EFF] text-white h-10 inline-flex items-center">
+                      <img
+                        src="/images/apple-icon.png"
+                        className="h-5 w-5"
+                        alt="iOS"
+                      />
+                      <span>Download</span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto">
                     <div className="text-sm font-semibold">Coming Soon!</div>
                     <p className="text-xs text-gray-500">
-                      Our app is currently in development.
+                      iOS app is coming to App Store soon.
                     </p>
                   </PopoverContent>
                 </Popover>
-                <Button
-                  variant="outline"
-                  onClick={() => (location.href = "/#about")}>
-                  Learn More
-                </Button>
               </div>
             </div>
           </div>
